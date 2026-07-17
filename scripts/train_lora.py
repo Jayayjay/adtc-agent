@@ -27,8 +27,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
+
+# Torch-only: keep transformers from lazily importing TensorFlow, whose Colab
+# build breaks under the protobuf version the GGUF converter pins. Harmless off
+# Colab. (train_lora ran fine before this only because it precedes that install;
+# set it here too so ordering can't matter.)
+os.environ.setdefault("USE_TF", "0")
+os.environ.setdefault("USE_FLAX", "0")
+os.environ.setdefault("TRANSFORMERS_NO_ADVISORY_WARNINGS", "1")
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 

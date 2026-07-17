@@ -35,9 +35,18 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import os
 import subprocess
 import sys
 from pathlib import Path
+
+# We are torch-only. Colab preinstalls TensorFlow, and transformers will try to
+# import it lazily (via is_tf_available); on Colab that TF is broken by the
+# protobuf version the GGUF converter's requirements pull in. Disabling TF/Flax
+# up front sidesteps the whole protobuf conflict. Harmless off Colab.
+os.environ.setdefault("USE_TF", "0")
+os.environ.setdefault("USE_FLAX", "0")
+os.environ.setdefault("TRANSFORMERS_NO_ADVISORY_WARNINGS", "1")
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
