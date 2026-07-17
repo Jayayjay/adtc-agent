@@ -1,0 +1,62 @@
+{
+  "overall_sacc_proxy": 100.0,
+  "results": [
+    {
+      "file": "imci_triage.json",
+      "total": 7,
+      "correct": 7,
+      "sacc_proxy": 100.0,
+      "details": [
+        {
+          "id": "case_001",
+          "expected": "severe",
+          "actual": "severe",
+          "correct": true
+        },
+        {
+          "id": "case_002",
+          "expected": "moderate",
+          "actual": "moderate",
+          "correct": true
+        },
+        {
+          "id": "case_003",
+          "expected": "mild",
+          "actual": "mild",
+          "correct": true
+        },
+        {
+          "id": "case_004",
+          "expected": "severe",
+          "actual": "severe",
+          "correct": true
+        },
+        {
+          "id": "case_005",
+          "expected": "severe",
+          "actual": "severe",
+          "correct": true
+        },
+        {
+          "id": "case_007",
+          "expected": "mild",
+          "actual": "mild",
+          "correct": true
+        },
+        {
+          "id": "case_008",
+          "expected": "moderate",
+          "actual": "moderate",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "file": "example_tasks.json",
+      "total": 0,
+      "correct": 0,
+      "sacc_proxy": 0.0,
+      "details": []
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "_note": "Placeholder task set. Replace with real tasks once Phase 3 (task domain selection) is finalized. 'label' fields are used by scripts/train_classifier.py if you build the learned router upgrade.",
+  "domain": "TBD -- pick from Phase 3 options (file organizer / scheduling / dev workflow / etc.)",
+  "examples": [
+    {
+      "message": "What time is it right now?",
+      "label": "fast",
+      "expected_behavior": "Direct answer via datetime tool, no HRM needed."
+    },
+    {
+      "message": "Schedule these three tasks across two time slots avoiding conflicts.",
+      "label": "reasoning",
+      "expected_behavior": "Routes to HRM for constraint-based scheduling."
+    }
+  ]
+}

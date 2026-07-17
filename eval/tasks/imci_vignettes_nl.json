@@ -1,0 +1,109 @@
+{
+  "_note": "Natural-language IMCI vignettes for model_sacc_scorer.py, which prompts the .gguf directly. Each has `prompt` (free text a grader might write), `expected_classification` (severe/moderate/mild), `input` (structured fields, so the cross-check assert IMCITriageTool.run(**input)['classification']==expected holds), and optional must_mention / must_not_mention.",
+  "_IMPORTANT": "These starter cases were written by the same author as src/sft/verbalize.py, so they are a WEAK proxy for the hidden prompts (they share an author's mental model of how a vignette reads). The plan calls for ~40 vignettes hand-written by someone who did NOT build the generator; those are the honest signal. Replace/extend this file with theirs before trusting the number.",
+  "examples": [
+    {
+      "id": "nl_001",
+      "prompt": "A mother brings in her 9-month-old. He's had a cough for two days and I counted 56 breaths in a minute. No chest indrawing, no stridor. What's the IMCI classification?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "pneumonia",
+      "input": {"age_months": 9, "cough_or_difficulty_breathing": true, "respiratory_rate_per_min": 56},
+      "must_mention": ["pneumonia"],
+      "must_not_mention": ["ICD-10", "imci_protocol", "scaffold"]
+    },
+    {
+      "id": "nl_002",
+      "prompt": "14 month old, coughing, breathing 38 per minute, no indrawing, no stridor. How do I classify?",
+      "expected_classification": "mild",
+      "expected_condition_label": "cough_or_cold",
+      "input": {"age_months": 14, "cough_or_difficulty_breathing": true, "respiratory_rate_per_min": 38},
+      "must_not_mention": ["ICD-10", "imci_protocol"]
+    },
+    {
+      "id": "nl_003",
+      "prompt": "The child is 2 years old and having convulsions right now. What do I do?",
+      "expected_classification": "severe",
+      "expected_condition_label": "very_severe_disease",
+      "input": {"age_months": 24, "danger_signs_present": "convulsing_now"},
+      "must_mention": ["refer", "urgent"],
+      "must_not_mention": ["ICD-10"]
+    },
+    {
+      "id": "nl_004",
+      "prompt": "3 year old with diarrhoea for 4 days. Her eyes are sunken and when I pinch the skin it goes back very slowly, more than two seconds. She's restless.",
+      "expected_classification": "severe",
+      "expected_condition_label": "severe_dehydration",
+      "input": {"age_months": 36, "diarrhea": true, "diarrhea_days": 4, "sunken_eyes": true, "skin_pinch_goes_back_very_slowly": true, "child_restless_or_irritable": true},
+      "must_mention": ["refer"],
+      "must_not_mention": ["ICD-10", "scaffold"]
+    },
+    {
+      "id": "nl_005",
+      "prompt": "18-month-old, loose stools for a day, drinking eagerly and seems thirsty, eyes look a bit sunken. No blood in the stool.",
+      "expected_classification": "moderate",
+      "expected_condition_label": "some_dehydration",
+      "input": {"age_months": 18, "diarrhea": true, "diarrhea_days": 1, "drinking_eagerly_thirsty": true, "sunken_eyes": true},
+      "must_not_mention": ["ICD-10"]
+    },
+    {
+      "id": "nl_006",
+      "prompt": "A 4 year old has had a fever for two days. No stiff neck, no danger signs. We are not in a malaria area. How would you classify this?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "fever_unspecified_malaria_not_assessed",
+      "input": {"age_months": 48, "fever": true},
+      "must_not_mention": ["ICD-10", "imci_protocol"]
+    },
+    {
+      "id": "nl_007",
+      "prompt": "Baby of 30 months, fever, and the neck is stiff — she cries when I bend it forward.",
+      "expected_classification": "severe",
+      "expected_condition_label": "very_severe_febrile_disease",
+      "input": {"age_months": 30, "fever": true, "stiff_neck": true},
+      "must_mention": ["refer"],
+      "must_not_mention": ["ICD-10"]
+    },
+    {
+      "id": "nl_008",
+      "prompt": "child 3yo, ear discharge for about three weeks, no tender swelling behind the ear, no fever.",
+      "expected_classification": "moderate",
+      "expected_condition_label": "chronic_ear_infection",
+      "input": {"age_months": 36, "ear_problem": true, "ear_discharge_days": 21},
+      "must_not_mention": ["ICD-10"]
+    },
+    {
+      "id": "nl_009",
+      "prompt": "There's a painful swelling behind the ear of this 2-year-old, tender to touch. What classification?",
+      "expected_classification": "severe",
+      "expected_condition_label": "mastoiditis",
+      "input": {"age_months": 24, "ear_problem": true, "tender_swelling_behind_ear": true},
+      "must_mention": ["refer"],
+      "must_not_mention": ["ICD-10"]
+    },
+    {
+      "id": "nl_010",
+      "prompt": "5-year-old, ear hurts, no discharge, no swelling behind the ear.",
+      "expected_classification": "moderate",
+      "expected_condition_label": "acute_ear_infection",
+      "input": {"age_months": 60, "ear_problem": true, "ear_pain": true},
+      "must_not_mention": ["ICD-10"]
+    },
+    {
+      "id": "nl_011",
+      "prompt": "Hi, can you tell me the capital of Nigeria?",
+      "expected_classification": null,
+      "expected_condition_label": null,
+      "input": null,
+      "must_not_mention": ["CLASSIFICATION", "refer urgently"],
+      "_note": "small talk must NOT trigger a triage dump. Not scored for accuracy; checked for over-classification."
+    },
+    {
+      "id": "nl_012",
+      "prompt": "How do I classify a 3-week-old newborn with a fever?",
+      "expected_classification": null,
+      "expected_condition_label": null,
+      "input": null,
+      "must_mention": ["young", "cannot", "chart"],
+      "_note": "0-2mo is out of the modelled band. The model should decline, not classify."
+    }
+  ]
+}

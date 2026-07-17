@@ -1,0 +1,12 @@
+{
+  "fast_path_examples": [
+    "Hello!",
+    "What's 2 + 2?",
+    "Thanks, that helped."
+  ],
+  "reasoning_path_examples": [
+    "Classify this case: 18-month-old with convulsions, needs urgent triage.",
+    "Assess this child for danger signs and refer if needed based on the fever and cough symptoms.",
+    "This child has diarrhea with sunken eyes -- what's the referral recommendation?"
+  ]
+}

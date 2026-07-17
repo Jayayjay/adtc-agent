@@ -1,0 +1,98 @@
+{
+  "_disclaimer": "These vignettes exercise the modeled subset of the WHO IMCI 2014 chart booklet -- see src/tools/imci_protocol.py's module docstring for what is/isn't covered. Structurally grounded in the official chart booklet (cited in that file), but this remains a competition scaffold requiring clinical review before any real use.",
+  "examples": [
+    {
+      "id": "case_001",
+      "description": "18-month-old child brought in with convulsions witnessed by caretaker.",
+      "input": {
+        "age_months": 18,
+        "danger_signs_present": "convulsions"
+      },
+      "expected_classification": "severe",
+      "expected_condition_label": "very_severe_disease",
+      "label": "reasoning"
+    },
+    {
+      "id": "case_002",
+      "description": "8-month-old with cough for 3 days, no danger signs, respiratory rate 55/min (>=50 threshold for <12mo), no chest indrawing.",
+      "input": {
+        "age_months": 8,
+        "cough_or_difficulty_breathing": true,
+        "respiratory_rate_per_min": 55
+      },
+      "expected_classification": "moderate",
+      "expected_condition_label": "pneumonia",
+      "label": "reasoning"
+    },
+    {
+      "id": "case_003",
+      "description": "3-year-old with mild cough, respiratory rate 25/min (below 40 threshold for 12mo+), no other signs.",
+      "input": {
+        "age_months": 36,
+        "cough_or_difficulty_breathing": true,
+        "respiratory_rate_per_min": 25
+      },
+      "expected_classification": "mild",
+      "expected_condition_label": "cough_or_cold",
+      "label": "reasoning"
+    },
+    {
+      "id": "case_004",
+      "description": "2-year-old with diarrhea, sunken eyes AND skin pinch goes back very slowly (2 of 4 severe-dehydration signs per WHO protocol).",
+      "input": {
+        "age_months": 24,
+        "diarrhea": true,
+        "sunken_eyes": true,
+        "skin_pinch_goes_back_very_slowly": true
+      },
+      "expected_classification": "severe",
+      "expected_condition_label": "severe_dehydration",
+      "label": "reasoning"
+    },
+    {
+      "id": "case_005",
+      "description": "Caretaker reports child is unusually sleepy and hard to wake (lethargic/unconscious, a general danger sign), plus has a fever.",
+      "input": {
+        "age_months": 30,
+        "danger_signs_present": "lethargic_or_unconscious",
+        "fever": true
+      },
+      "expected_classification": "severe",
+      "expected_condition_label": "very_severe_disease",
+      "label": "reasoning"
+    },
+    {
+      "id": "case_006",
+      "description": "Health worker asks: 'Hello, how are you doing today?'",
+      "input": {},
+      "expected_classification": null,
+      "expected_condition_label": null,
+      "label": "fast"
+    },
+    {
+      "id": "case_007",
+      "description": "2-year-old with diarrhea, only ONE dehydration sign present (sunken eyes alone) -- should NOT reach severe or some dehydration per the two-of-four rule.",
+      "input": {
+        "age_months": 24,
+        "diarrhea": true,
+        "sunken_eyes": true
+      },
+      "expected_classification": "mild",
+      "expected_condition_label": "no_dehydration",
+      "label": "reasoning"
+    },
+    {
+      "id": "case_008",
+      "description": "3-year-old with diarrhea, restless/irritable AND drinking eagerly/thirsty (2 of 4 'some dehydration' signs).",
+      "input": {
+        "age_months": 36,
+        "diarrhea": true,
+        "child_restless_or_irritable": true,
+        "drinking_eagerly_thirsty": true
+      },
+      "expected_classification": "moderate",
+      "expected_condition_label": "some_dehydration",
+      "label": "reasoning"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "adtc-agent"
+version = "0.1.0"
+description = "Local, offline agent orchestrator combining Qwen3.5-0.8B with an HRM reasoning core, built for the ADTC 2026 Autonomous AI Agents track."
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -1,0 +1,17 @@
+/.venv/
+/venv/
+models/
+/models
+
+# The submission fork is a SEPARATE git repo cloned in here as a working
+# location — never embed it in this repo.
+/adtc-2026-submission-template/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Local runtime artifacts
+data/memory.db
+data/logs/
+.pytest_cache/

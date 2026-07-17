@@ -1,0 +1,11 @@
+{
+  "sacc": 4.0,
+  "sperf": 100.0,
+  "seff": 81.74581473214285,
+  "thermal_penalty": 0.0,
+  "total_score": 48.34916294642857,
+  "mean_tps": 19.517627212848563,
+  "peak_ram_mb": 1277.79296875,
+  "peak_temp_c": 81.0,
+  "throttled": false
+}
