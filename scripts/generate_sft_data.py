@@ -39,7 +39,12 @@ from src.sft.mixture import (
     make_scope_refusal_example,
     make_triage_example,
 )
-from src.sft.sampling import ALL_LABELS, prune_to_decisive_branch, sample_stratified
+from src.sft.sampling import (
+    ALL_LABELS,
+    prune_to_decisive_branch,
+    sample_breathing_threshold_cases,
+    sample_stratified,
+)
 from src.sft.verbalize import VignetteStyle
 from src.tools.imci_protocol import assess
 
@@ -97,7 +102,8 @@ def _acknowledged_extra(child, rng: random.Random) -> str | None:
 
 
 def generate(num_triage: int, seed: int, chat_path: Path | None,
-             include_extended: bool = False, extended_frac: float = 0.15) -> list[dict]:
+             include_extended: bool = False, extended_frac: float = 0.15,
+             breathing_cases: int = 1000) -> list[dict]:
     rng = random.Random(seed)
     records: list[dict] = []
 
@@ -110,6 +116,18 @@ def generate(num_triage: int, seed: int, chat_path: Path | None,
             make_triage_example(child, result, rng, style, f"sft_triage_{i:06d}",
                                 acknowledged_extra=_acknowledged_extra(child, rng))
         )
+
+    # --- targeted: borderline fast-breathing cases --------------------------
+    # The first fine-tune under-triaged pneumonia when a raised respiratory rate
+    # was the only sign (called it cough/cold). These cases straddle the
+    # age-banded threshold on both sides so the model learns the exact cutoff.
+    if breathing_cases:
+        bt = sample_breathing_threshold_cases(random.Random(seed + 2), breathing_cases)
+        for i, (child, result) in enumerate(bt):
+            style = rng.choice(styles)
+            records.append(make_triage_example(child, result, rng, style, f"sft_breath_{i:06d}"))
+        print(f"borderline fast-breathing: {breathing_cases} targeted cases "
+              f"(RR the sole pneumonia sign, both sides of the threshold)")
 
     # --- extended branches (malaria/measles/anaemia/malnutrition) -----------
     # OFF by default: these classifiers are UNREVIEWED clinical logic. When on,
@@ -234,6 +252,9 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--num-triage", type=int, default=7500,
                     help="8-12k is the useful range; a 0.8B at r=16 saturates then memorises")
+    ap.add_argument("--breathing-cases", type=int, default=1000,
+                    help="targeted borderline fast-breathing cases (RR-only, both sides of the "
+                         "age threshold) to fix pneumonia under-triage. 0 to disable.")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--val-frac", type=float, default=0.1)
     ap.add_argument("--test-frac", type=float, default=0.1)
@@ -253,7 +274,8 @@ def main() -> int:
         raise SystemExit(f"--holdout-styles names unknown styles: {unknown}")
 
     records = generate(args.num_triage, args.seed, Path(args.chat_pool),
-                       include_extended=args.include_extended)
+                       include_extended=args.include_extended,
+                       breathing_cases=args.breathing_cases)
     splits = split_sft(records, holdout, args.val_frac, args.test_frac, args.seed)
 
     out_dir = Path(args.out_dir)

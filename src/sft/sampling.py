@@ -260,3 +260,54 @@ def sample_stratified(
 
     rng.shuffle(out)
     return out
+
+
+# Physiologically sane floor for a rendered respiratory rate.
+_MIN_RR = 20
+
+
+def sample_breathing_threshold_cases(
+    rng: random.Random, n: int
+) -> list[tuple[ChildAssessment, TriageResult]]:
+    """
+    Cases where the respiratory rate is the ONLY pneumonia sign, sampled on both
+    sides of the age-banded fast-breathing threshold.
+
+    Targets a measured weakness of the fine-tune: it under-applies the threshold
+    when a raised rate is the sole sign (no chest indrawing, no stridor), calling
+    borderline pneumonia "cough or cold". assess()'s rule is <12mo -> >=50,
+    >=12mo -> >=40 (see _fast_breathing_threshold). We deliberately split ~50/50
+    just-over (-> pneumonia) and just-under (-> cough_or_cold) so the model learns
+    the CUTOFF, not a naive "high rate -> pneumonia". Both age bands are covered
+    so it learns the band-dependence too.
+
+    Returned cases are pruned; the caller verbalizes and answers them like any
+    other triage case.
+    """
+    from src.tools.imci_protocol import _fast_breathing_threshold
+
+    out: list[tuple[ChildAssessment, TriageResult]] = []
+    for i in range(n):
+        # Balance the four quadrants: {young(<12mo, thr 50), old(>=12mo, thr 40)}
+        # x {just-over -> pneumonia, just-under -> cough/cold}. A random 2-59mo age
+        # is ~83% >=12mo, which would starve the young-infant threshold (50) — the
+        # exact band the fine-tune missed (an 11-month-old at RR 55).
+        young = (i // 2) % 2 == 0
+        age = rng.randint(2, 11) if young else rng.randint(12, 59)
+        thr = _fast_breathing_threshold(age)
+        if i % 2 == 0:
+            rr = rng.randint(thr, thr + 12)               # fast -> pneumonia
+        else:
+            rr = rng.randint(max(_MIN_RR, thr - 12), thr - 1)  # not fast -> cough/cold
+        child = ChildAssessment(
+            age_months=age,
+            cough_or_difficulty_breathing=True,
+            respiratory_rate_per_min=rr,
+            # no chest_indrawing, no stridor: the rate is the sole discriminator
+        )
+        result = assess(child)
+        assert prune_preserves_label(child, result)
+        out.append((prune_to_decisive_branch(child, result), result))
+
+    rng.shuffle(out)
+    return out
