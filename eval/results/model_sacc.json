@@ -1,0 +1,413 @@
+{
+  "fine_tuned": {
+    "model": "models/Qwen3.5-0.8B-IMCI-Q4_K_M.gguf",
+    "chat_sys_greedy": {
+      "n_cases": 10,
+      "mode": "chat+sys",
+      "temperature": 0.0,
+      "samples_per_case": 1,
+      "accuracy": 100.0,
+      "format_compliance": 100.0,
+      "undertriage_rate": 0.0,
+      "overtriage_rate": 0.0,
+      "per_case": [
+        {
+          "id": "nl_001",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ]
+        },
+        {
+          "id": "nl_002",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ]
+        },
+        {
+          "id": "nl_003",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ]
+        },
+        {
+          "id": "nl_004",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ]
+        },
+        {
+          "id": "nl_005",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ]
+        },
+        {
+          "id": "nl_006",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ]
+        },
+        {
+          "id": "nl_007",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ]
+        },
+        {
+          "id": "nl_008",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ]
+        },
+        {
+          "id": "nl_009",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ]
+        },
+        {
+          "id": "nl_010",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ]
+        }
+      ]
+    },
+    "chat_nosys_greedy": {
+      "n_cases": 10,
+      "mode": "chat",
+      "temperature": 0.0,
+      "samples_per_case": 1,
+      "accuracy": 80.0,
+      "format_compliance": 90.0,
+      "undertriage_rate": 10.0,
+      "overtriage_rate": 0.0,
+      "per_case": [
+        {
+          "id": "nl_001",
+          "expected": "moderate",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ]
+        },
+        {
+          "id": "nl_002",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ]
+        },
+        {
+          "id": "nl_003",
+          "expected": "severe",
+          "predicted": null,
+          "all_samples": [
+            null
+          ]
+        },
+        {
+          "id": "nl_004",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ]
+        },
+        {
+          "id": "nl_005",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ]
+        },
+        {
+          "id": "nl_006",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ]
+        },
+        {
+          "id": "nl_007",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ]
+        },
+        {
+          "id": "nl_008",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ]
+        },
+        {
+          "id": "nl_009",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ]
+        },
+        {
+          "id": "nl_010",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ]
+        }
+      ]
+    },
+    "chat_sys_sampled": {
+      "n_cases": 10,
+      "mode": "chat+sys",
+      "temperature": 0.8,
+      "samples_per_case": 5,
+      "accuracy": 100.0,
+      "format_compliance": 100.0,
+      "undertriage_rate": 0.0,
+      "overtriage_rate": 0.0,
+      "per_case": [
+        {
+          "id": "nl_001",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ]
+        },
+        {
+          "id": "nl_002",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild",
+            "mild",
+            "mild",
+            "mild",
+            "mild"
+          ]
+        },
+        {
+          "id": "nl_003",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe",
+            "severe",
+            "severe",
+            "severe",
+            "severe"
+          ]
+        },
+        {
+          "id": "nl_004",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe",
+            "severe",
+            "severe",
+            "severe",
+            "severe"
+          ]
+        },
+        {
+          "id": "nl_005",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ]
+        },
+        {
+          "id": "nl_006",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ]
+        },
+        {
+          "id": "nl_007",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe",
+            "severe",
+            "severe",
+            "severe",
+            "severe"
+          ]
+        },
+        {
+          "id": "nl_008",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ]
+        },
+        {
+          "id": "nl_009",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe",
+            "severe",
+            "severe",
+            "severe",
+            "severe"
+          ]
+        },
+        {
+          "id": "nl_010",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ]
+        }
+      ]
+    },
+    "raw_greedy": {
+      "n_cases": 10,
+      "mode": "raw",
+      "temperature": 0.0,
+      "samples_per_case": 1,
+      "accuracy": 60.0,
+      "format_compliance": 70.0,
+      "undertriage_rate": 10.0,
+      "overtriage_rate": 0.0,
+      "per_case": [
+        {
+          "id": "nl_001",
+          "expected": "moderate",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ]
+        },
+        {
+          "id": "nl_002",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ]
+        },
+        {
+          "id": "nl_003",
+          "expected": "severe",
+          "predicted": null,
+          "all_samples": [
+            null
+          ]
+        },
+        {
+          "id": "nl_004",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ]
+        },
+        {
+          "id": "nl_005",
+          "expected": "moderate",
+          "predicted": null,
+          "all_samples": [
+            null
+          ]
+        },
+        {
+          "id": "nl_006",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ]
+        },
+        {
+          "id": "nl_007",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ]
+        },
+        {
+          "id": "nl_008",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ]
+        },
+        {
+          "id": "nl_009",
+          "expected": "severe",
+          "predicted": null,
+          "all_samples": [
+            null
+          ]
+        },
+        {
+          "id": "nl_010",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ]
+        }
+      ]
+    }
+  }
+}

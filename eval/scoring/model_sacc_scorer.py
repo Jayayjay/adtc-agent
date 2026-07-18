@@ -55,7 +55,17 @@ def parse_classification(text: str) -> str | None:
     return m.group(1).lower() if m else None
 
 
-def score_model(llm, tasks: list[dict], temperature: float, n: int, max_tokens: int = 256) -> dict:
+# Short domain prime for chat mode. The evaluator/judges invoke an instruct
+# model through its chat template; whether they add a system prompt is unknown,
+# so we score chat mode both with and without one.
+SYSTEM_PROMPT = (
+    "You are an offline IMCI decision-support assistant for children 2 months to "
+    "5 years old. Check general danger signs first, and refer urgently when in doubt."
+)
+
+
+def score_model(llm, tasks: list[dict], temperature: float, n: int,
+                mode: str = "chat", system: bool = True, max_tokens: int = 256) -> dict:
     total = correct = parseable = 0
     under = over = 0
     per_case = []
@@ -65,9 +75,22 @@ def score_model(llm, tasks: list[dict], temperature: float, n: int, max_tokens: 
         prompt = task["prompt"]
         preds = []
         for _ in range(n):
-            out = llm(prompt, max_tokens=max_tokens, temperature=temperature,
-                      top_k=1 if temperature == 0 else 40, seed=0)
-            preds.append(parse_classification(out["choices"][0]["text"]))
+            if mode == "raw":
+                # Bare completion, no chat template. This is NOT how an instruct
+                # model is meant to be run and NOT how the profiler/judges invoke
+                # it — kept only to expose the train/serve mismatch, since the
+                # model was trained through the chat template.
+                out = llm(prompt, max_tokens=max_tokens, temperature=temperature,
+                          top_k=1 if temperature == 0 else 40, seed=0)
+                text = out["choices"][0]["text"]
+            else:  # "chat" — the representative mode
+                messages = ([{"role": "system", "content": SYSTEM_PROMPT}] if system else []) + \
+                           [{"role": "user", "content": prompt}]
+                out = llm.create_chat_completion(
+                    messages=messages, max_tokens=max_tokens, temperature=temperature,
+                    top_k=1 if temperature == 0 else 40, seed=0)
+                text = out["choices"][0]["message"]["content"]
+            preds.append(parse_classification(text))
 
         # majority vote over the n samples (n=1 for greedy)
         valid = [p for p in preds if p]
@@ -89,6 +112,7 @@ def score_model(llm, tasks: list[dict], temperature: float, n: int, max_tokens: 
 
     return {
         "n_cases": total,
+        "mode": mode + ("+sys" if mode == "chat" and system else ""),
         "temperature": temperature,
         "samples_per_case": n,
         "accuracy": round(100 * correct / total, 1) if total else 0.0,
@@ -112,10 +136,14 @@ def _load_llm(model_path: str):
 
 def run(model_path: str, tasks: list[dict]) -> dict:
     llm = _load_llm(model_path)
+    # chat+sys is the representative mode (how an instruct model is invoked);
+    # chat/no-sys and raw expose robustness to invocation modes we don't control.
     return {
         "model": model_path,
-        "greedy": score_model(llm, tasks, temperature=0.0, n=1),
-        "sampled": score_model(llm, tasks, temperature=0.8, n=5),
+        "chat_sys_greedy":   score_model(llm, tasks, 0.0, 1, mode="chat", system=True),
+        "chat_nosys_greedy": score_model(llm, tasks, 0.0, 1, mode="chat", system=False),
+        "chat_sys_sampled":  score_model(llm, tasks, 0.8, 5, mode="chat", system=True),
+        "raw_greedy":        score_model(llm, tasks, 0.0, 1, mode="raw"),
     }
 
 
@@ -136,12 +164,11 @@ def main() -> int:
         report["base"] = run(args.base, tasks)
 
     def show(label, r):
-        g, s = r["greedy"], r["sampled"]
         print(f"=== {label}: {r['model']} ===")
-        print(f"  greedy   acc {g['accuracy']:5.1f}%  format {g['format_compliance']:5.1f}%  "
-              f"UNDER {g['undertriage_rate']:4.1f}%  over {g['overtriage_rate']:4.1f}%")
-        print(f"  temp0.8  acc {s['accuracy']:5.1f}%  format {s['format_compliance']:5.1f}%  "
-              f"UNDER {s['undertriage_rate']:4.1f}%  over {s['overtriage_rate']:4.1f}%")
+        for key in ("chat_sys_greedy", "chat_nosys_greedy", "chat_sys_sampled", "raw_greedy"):
+            m = r[key]
+            print(f"  {key:18} acc {m['accuracy']:5.1f}%  format {m['format_compliance']:5.1f}%  "
+                  f"UNDER {m['undertriage_rate']:4.1f}%  over {m['overtriage_rate']:4.1f}%")
 
     show("FINE-TUNED", report["fine_tuned"])
     if args.base:
