@@ -1,9 +1,9 @@
 {
-  "model": "models/MiniCPM5-1B-Q4_K_M.gguf",
+  "model": "models/Qwen3.5-0.8B-IMCI-Q4_K_M.gguf",
   "duration_s": 300,
   "peak_temp_c": 81.0,
-  "early_tps_avg": 25.08809840369749,
-  "late_tps_avg": 24.97611223716366,
+  "early_tps_avg": 24.758198264679912,
+  "late_tps_avg": 24.15990955779434,
   "throttled": false,
   "thermal_penalty": 0.0
 }
