@@ -31,13 +31,19 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from scripts.generate_hrm_training_data import split_by_case
 from src.sft.answer import render_answer
 from src.sft.mixture import (
+    EXTENDED_TOPICS,
     Kind,
     clean_completion,
+    make_differential_example,
+    make_dosing_query_example,
     make_extended_example,
+    make_followup_query_example,
     make_general_chat_example,
     make_next_question_example,
     make_scope_refusal_example,
+    make_treatment_query_example,
     make_triage_example,
+    make_young_infant_example,
 )
 from src.sft.sampling import (
     ALL_LABELS,
@@ -56,8 +62,14 @@ OUT_DIR = Path(__file__).resolve().parent.parent / "data" / "sft"
 # in-distribution val accuracy will both read ~100% and both mean nothing.
 DEFAULT_HOLDOUT_STYLES = ("verbose_paragraph", "dialogue_transcript")
 
+# Auxiliary knowledge Q&A (dosing/treatment/follow-up/differential) take their
+# share from general_chat, NOT from triage -- triage is the graded task and must
+# stay dominant. All four are answered deterministically from the reviewed
+# tables, so they carry the same no-drift guarantee as triage.
 MIXTURE = {Kind.TRIAGE: 0.75, Kind.SCOPE_REFUSAL: 0.05,
-           Kind.NEXT_QUESTION: 0.05, Kind.GENERAL_CHAT: 0.15}
+           Kind.NEXT_QUESTION: 0.05, Kind.GENERAL_CHAT: 0.05,
+           Kind.TREATMENT_QUERY: 0.03, Kind.DOSING_QUERY: 0.03,
+           Kind.FOLLOWUP_QUERY: 0.02, Kind.DIFFERENTIAL: 0.02}
 
 
 def build_target(num_triage: int) -> dict[str, int]:
@@ -103,7 +115,7 @@ def _acknowledged_extra(child, rng: random.Random) -> str | None:
 
 def generate(num_triage: int, seed: int, chat_path: Path | None,
              include_extended: bool = False, extended_frac: float = 0.15,
-             breathing_cases: int = 1000) -> list[dict]:
+             yi_frac: float = 0.06, breathing_cases: int = 1000) -> list[dict]:
     rng = random.Random(seed)
     records: list[dict] = []
 
@@ -143,15 +155,32 @@ def generate(num_triage: int, seed: int, chat_path: Path | None,
             if ex is not None:
                 records.append(ex)
                 made += 1
-        print(f"extended branches: {made} examples "
-              f"(malaria/measles/anaemia/malnutrition) -- UNREVIEWED clinical logic")
+        print(f"extended branches: {made} examples (fever/malaria, measles, anaemia, "
+              f"malnutrition, wheeze, persistent diarrhoea, dysentery, sore throat, growth, HIV) "
+              f"-- UNREVIEWED clinical logic")
+
+        # Young-infant (0-2mo) chart: modelled now, no longer a refusal.
+        want_yi = int(len(records) * yi_frac)
+        made = attempts = 0
+        while made < want_yi and attempts < want_yi * 20:
+            attempts += 1
+            ex = make_young_infant_example(rng, f"sft_yi_{made:06d}")
+            if ex is not None:
+                records.append(ex)
+                made += 1
+        print(f"young-infant branches: {made} examples (bacterial infection/jaundice, "
+              f"diarrhoea, congenital) -- UNREVIEWED clinical logic")
 
     n_triage = len(records)
     n_total = int(n_triage / MIXTURE[Kind.TRIAGE])
 
     # --- scope refusals -----------------------------------------------------
+    # In the extended build, the classifiers handle malaria/measles/.../young-
+    # infant/HIV, so suppress their refusals -- otherwise the corpus both refuses
+    # and classifies the same topic.
+    exclude = EXTENDED_TOPICS if include_extended else frozenset()
     for i in range(int(n_total * MIXTURE[Kind.SCOPE_REFUSAL])):
-        records.append(make_scope_refusal_example(rng, f"sft_refusal_{i:06d}"))
+        records.append(make_scope_refusal_example(rng, f"sft_refusal_{i:06d}", exclude_topics=exclude))
 
     # --- next question ------------------------------------------------------
     want = int(n_total * MIXTURE[Kind.NEXT_QUESTION])
@@ -165,6 +194,22 @@ def generate(num_triage: int, seed: int, chat_path: Path | None,
     if made < want:
         print(f"WARNING: only {made}/{want} next_question examples -- most rollouts stop "
               f"on turn 0 (danger sign) and have no usable mid-point.")
+
+    # --- auxiliary knowledge Q&A (deterministic from the dosing/treatment tables) ---
+    for i in range(int(n_total * MIXTURE[Kind.DOSING_QUERY])):
+        records.append(make_dosing_query_example(rng, f"sft_dose_{i:06d}"))
+    for i in range(int(n_total * MIXTURE[Kind.FOLLOWUP_QUERY])):
+        records.append(make_followup_query_example(rng, f"sft_followup_{i:06d}"))
+    for i in range(int(n_total * MIXTURE[Kind.DIFFERENTIAL])):
+        records.append(make_differential_example(rng, f"sft_diff_{i:06d}"))
+    want_tx = int(n_total * MIXTURE[Kind.TREATMENT_QUERY])
+    made = attempts = 0
+    while made < want_tx and attempts < want_tx * 20:
+        attempts += 1
+        ex = make_treatment_query_example(rng, f"sft_tx_{made:06d}")
+        if ex is not None:
+            records.append(ex)
+            made += 1
 
     # --- general chat -------------------------------------------------------
     want_chat = int(n_total * MIXTURE[Kind.GENERAL_CHAT])

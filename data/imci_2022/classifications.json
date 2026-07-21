@@ -1,0 +1,853 @@
+{
+  "_meta": {
+    "source": "data/2022 IMCI chart booklet_final.pdf",
+    "source_title": "Integrated Management of Childhood Illness 2022",
+    "edition": "2022 (South African national IMCI adaptation; HIV/ART, RUTF, RTHB, social-grant content confirm it is not the WHO 2014 generic booklet)",
+    "extracted_by": "scripts/parse_imci_booklet.py (pypdf layout mode) + manual transcription of the classification tables",
+    "extracted_on": "2026-07-20",
+    "status": "DRAFT TRANSCRIPTION -- NOT clinician-reviewed. This is the reviewable source for extending src/tools/imci_protocol.py (assess) and src/sft/extended_protocol.py. Every new/changed branch must be signed off by a qualified clinician against the current national adaptation before it drives training data. See adtc-sft-corpus-built memory.",
+    "severity_tiers": {
+      "pink": "urgent referral / pre-referral treatment (top row)",
+      "yellow": "specific treatment at clinic + follow-up (middle row)",
+      "green": "home care / counsel only (bottom row)"
+    },
+    "modeled_status_legend": {
+      "modeled": "already in imci_protocol.assess() with a matching label",
+      "extended": "already in src/sft/extended_protocol.py (gated behind --include-extended, UNREVIEWED)",
+      "new_2022": "present in the 2022 booklet but NOT in either engine",
+      "divergent": "engine models this branch but the 2022 booklet's signs/labels/drugs differ from the engine's 2014 basis",
+      "engine_gap": "in the published booklet (2014 generic AND 2022) but NOT in either engine -- an engine-coverage gap, NOT a version difference"
+    },
+    "_correction_2026_07_20": "Re-tagged after cross-checking data/imci-chart-booklet.pdf (WHO generic March 2014). Several rows first tagged new_2022/divergent are actually present in the 2014 generic too (SpO2<90% oximetry, amoxicillin first-line, wheeze/salbutamol, persistent diarrhoea, dysentery+ciprofloxacin). Those are engine_gap (subset vs full booklet), not version differences. The two booklets agree far more than assumed."
+  },
+  "sick_child_2m_5y": {
+    "general_danger_signs": {
+      "page": 26,
+      "question": "Check for general danger signs (all children)",
+      "assess_signs": [
+        "not able to drink or breastfeed",
+        "vomits everything",
+        "convulsions during this illness",
+        "lethargic or unconscious",
+        "convulsing now"
+      ],
+      "classifications": [
+        {
+          "label": "very_severe_disease",
+          "tier": "pink",
+          "triggers": [
+            "any general danger sign"
+          ],
+          "treatment": "pre-referral treatment, keep warm, refer urgently",
+          "modeled_status": "modeled"
+        }
+      ]
+    },
+    "cough_or_difficult_breathing": {
+      "page": 27,
+      "question": "Does the child have a cough or difficult breathing?",
+      "assess_signs": [
+        "duration",
+        "count breaths in one minute",
+        "chest indrawing",
+        "stridor / wheeze (child must be calm)",
+        "oxygen saturation if pulse oximeter available"
+      ],
+      "fast_breathing_thresholds": {
+        "2m_to_12m": ">=50/min",
+        "12m_to_5y": ">=40/min"
+      },
+      "classifications": [
+        {
+          "label": "severe_pneumonia_or_very_severe_disease",
+          "tier": "pink",
+          "triggers": [
+            "any general danger sign",
+            "chest indrawing",
+            "stridor in calm child",
+            "SpO2 < 90% in room air"
+          ],
+          "treatment": "oxygen; salbutamol if wheeze; nebulised adrenaline+prednisone if stridor; ceftriaxone IM; cotrimoxazole; refer urgently",
+          "modeled_status": "modeled",
+          "divergence": "SpO2<90% oximetry trigger is in BOTH 2014 and 2022 (2014 p.'if pulse oximeter available, refer if <90%'); NOT a 2022 addition. Engine simply omits oximetry input.",
+          "in_2014_generic": true
+        },
+        {
+          "label": "pneumonia",
+          "tier": "yellow",
+          "triggers": [
+            "fast breathing"
+          ],
+          "treatment": "amoxicillin 5 days; assess for TB if cough >14 days; soothe throat; follow-up 2 days",
+          "modeled_status": "modeled",
+          "in_2014_generic": true,
+          "note_2014_check": "amoxicillin first-line is the 2014 generic standard too (not a 2022 change)."
+        },
+        {
+          "label": "cough_or_cold",
+          "tier": "green",
+          "triggers": [
+            "no signs of pneumonia or very severe disease"
+          ],
+          "treatment": "soothe throat; follow-up 5 days if not improving; assess TB if cough >14 days",
+          "modeled_status": "modeled"
+        }
+      ],
+      "wheeze_subchart": {
+        "page": 27,
+        "note": "Wheeze/salbutamol sub-classification on the cough branch. Present in the 2014 generic booklet too (engine_gap, not 2022-new). assess() models no wheeze at all.",
+        "assess_signs": [
+          "wheeze before this illness?",
+          "frequent night cough?",
+          "wheeze >7 days?",
+          "on asthma treatment?"
+        ],
+        "classifications": [
+          {
+            "label": "wheeze",
+            "tier": "yellow",
+            "triggers": [
+              "yes to any wheeze question",
+              "or all other children with wheeze"
+            ],
+            "treatment": "salbutamol via spacer 5 days; salbutamol+prednisone if referring a severe classification; follow-up 5 days if still wheezing",
+            "modeled_status": "engine_gap",
+            "in_2014_generic": true,
+            "note_2014_check": "wheeze/salbutamol sub-branch is in the 2014 generic booklet; engine models no wheeze. Not 2022-new."
+          }
+        ]
+      }
+    },
+    "diarrhoea": {
+      "page": 28,
+      "question": "Does the child have diarrhoea?",
+      "assess_signs": [
+        "duration",
+        "blood in stool",
+        "general condition (lethargic/unconscious, restless/irritable)",
+        "sunken eyes",
+        "offer fluid (not able to drink / drinks eagerly)",
+        "skin pinch (very slow >2s / slow)"
+      ],
+      "dehydration_classifications": [
+        {
+          "label": "severe_dehydration",
+          "tier": "pink",
+          "triggers": [
+            "two of: lethargic/unconscious, sunken eyes, not able to drink or drinking poorly, skin pinch goes back very slowly"
+          ],
+          "treatment": "Plan C; refer urgently; low-blood-sugar test; ORS sips en route",
+          "modeled_status": "modeled"
+        },
+        {
+          "label": "some_dehydration",
+          "tier": "yellow",
+          "triggers": [
+            "two of: restless/irritable, sunken eyes, drinks eagerly/thirsty, skin pinch goes back slowly"
+          ],
+          "treatment": "Plan B; zinc 2 weeks; follow-up 2 days",
+          "modeled_status": "modeled"
+        },
+        {
+          "label": "no_dehydration",
+          "tier": "green",
+          "triggers": [
+            "not enough signs for severe/some dehydration"
+          ],
+          "treatment": "Plan A; zinc 2 weeks; follow-up 5 days if not improving",
+          "modeled_status": "modeled"
+        }
+      ],
+      "persistent_diarrhoea_subchart": {
+        "note": "'AND IF DIARRHOEA 14 DAYS OR MORE' -- a SEPARATE simultaneous classification present in BOTH the 2014 generic and 2022 booklets. imci_protocol.py does NOT model persistent diarrhoea (engine_gap).",
+        "classifications": [
+          {
+            "label": "severe_persistent_diarrhoea",
+            "tier": "pink",
+            "triggers": [
+              "diarrhoea 14 days or more",
+              "AND dehydration present or losing weight"
+            ],
+            "treatment": "treat dehydration; refer urgently; additional Vitamin A dose",
+            "modeled_status": "engine_gap",
+            "in_2014_generic": true
+          },
+          {
+            "label": "persistent_diarrhoea",
+            "tier": "yellow",
+            "triggers": [
+              "diarrhoea 14 days or more",
+              "AND no visible dehydration"
+            ],
+            "treatment": "counsel on feeding; Vitamin A; zinc 2 weeks; follow-up 5 days",
+            "modeled_status": "engine_gap",
+            "in_2014_generic": true
+          }
+        ]
+      },
+      "dysentery_subchart": {
+        "note": "'AND IF BLOOD IN STOOL' -- separate classification. Not modeled by engine.",
+        "classifications": [
+          {
+            "label": "severe_dysentery",
+            "tier": "pink",
+            "triggers": [
+              "blood in stool",
+              "AND (dehydration present OR age <12 months)"
+            ],
+            "treatment": "refer urgently; keep warm; low-blood-glucose test",
+            "modeled_status": "engine_gap",
+            "in_2014_generic": true
+          },
+          {
+            "label": "dysentery",
+            "tier": "yellow",
+            "triggers": [
+              "blood in stool",
+              "AND age >=12 months",
+              "AND no dehydration"
+            ],
+            "treatment": "ciprofloxacin 3 days; follow-up 2 days",
+            "modeled_status": "engine_gap",
+            "divergence": "ciprofloxacin is the 2014 generic drug too (NOT nalidixic acid -- that was the older 2005 booklet). Corrected.",
+            "in_2014_generic": true
+          }
+        ]
+      }
+    },
+    "fever": {
+      "page": 29,
+      "question": "Does the child have fever? (history, feel, or axillary temp >=37.5C)",
+      "assess_signs": [
+        "duration",
+        "stiff neck",
+        "bulging fontanelle",
+        "decide malaria risk (lives in / visited malaria zone in past 4 weeks)",
+        "rapid malaria test if malaria risk",
+        "cold with runny nose / other adequate cause of fever"
+      ],
+      "classifications": [
+        {
+          "label": "suspected_meningitis",
+          "tier": "pink",
+          "triggers": [
+            "any general danger sign",
+            "OR stiff neck",
+            "OR bulging fontanelle"
+          ],
+          "treatment": "ceftriaxone IM; paracetamol if temp>=38; refer urgently",
+          "modeled_status": "divergent",
+          "divergence": "genuine 2022 difference: 2014 label is VERY SEVERE FEBRILE DISEASE; 2022 renames to SUSPECTED MENINGITIS and adds bulging fontanelle. Underlying trigger (danger sign / stiff neck) unchanged.",
+          "in_2014_generic": true
+        },
+        {
+          "label": "malaria",
+          "tier": "yellow",
+          "triggers": [
+            "malaria risk AND malaria test positive"
+          ],
+          "treatment": "treat for malaria if positive & child >12 months; paracetamol; notify confirmed cases; follow-up 2 days",
+          "modeled_status": "extended",
+          "divergence": "extended_protocol has 'malaria' / 'fever_malaria_test_required'; 2022 adds the malaria-test-not-available age<12m urgent-referral rule"
+        },
+        {
+          "label": "fever_no_malaria",
+          "tier": "yellow",
+          "triggers": [
+            "malaria test negative",
+            "OR malaria test not done and a cold/other adequate cause found"
+          ],
+          "treatment": "treat other causes; paracetamol; assess TB if fever >7 days; follow-up 2 days",
+          "modeled_status": "extended"
+        },
+        {
+          "label": "fever_unspecified_malaria_not_assessed",
+          "tier": "yellow",
+          "triggers": [
+            "no malaria risk assessment performed (engine's simplified branch)"
+          ],
+          "treatment": "paracetamol; consider TB if fever >7 days; follow-up 2 days",
+          "modeled_status": "modeled",
+          "note": "engine's simplified stand-in for the full malaria branch"
+        }
+      ]
+    },
+    "measles": {
+      "page": 30,
+      "question": "Consider measles if fever + generalised rash + (runny nose OR cough OR red eyes)",
+      "assess_signs": [
+        "contact with measles",
+        "mouth ulcers (deep/extensive?)",
+        "pus draining from eye",
+        "clouding of cornea"
+      ],
+      "classifications": [
+        {
+          "label": "severe_complicated_measles",
+          "tier": "pink",
+          "triggers": [
+            "any general danger sign",
+            "OR PNEUMONIA",
+            "OR symptomatic HIV",
+            "OR clouding of cornea",
+            "OR deep/extensive mouth ulcers"
+          ],
+          "treatment": "Vitamin A; chloramphenicol eye ointment if cornea clouding/eye pus; amoxicillin; refer urgently; immunise close contacts",
+          "modeled_status": "extended"
+        },
+        {
+          "label": "measles_with_eye_or_mouth_complications",
+          "tier": "yellow",
+          "triggers": [
+            "pus draining from eye",
+            "OR mouth ulcers (not deep/extensive)"
+          ],
+          "treatment": "Vitamin A; chloramphenicol eye ointment 7d; chlorhexidine for ulcers; follow-up 2 days",
+          "modeled_status": "extended"
+        },
+        {
+          "label": "measles",
+          "tier": "green",
+          "triggers": [
+            "measles now or in last 3 months, no complications"
+          ],
+          "treatment": "Vitamin A; isolate 5 days; immunise close contacts; follow-up if needed",
+          "modeled_status": "extended",
+          "note": "2022 folds test-confirmed / test-pending measles into treatment notes; extended_protocol label is 'measles'"
+        }
+      ]
+    },
+    "ear_problem": {
+      "page": 31,
+      "question": "Does the child have an ear problem?",
+      "assess_signs": [
+        "ear pain (wakes child at night?)",
+        "ear discharge (duration)",
+        "tender swelling behind ear",
+        "pus draining from ear"
+      ],
+      "classifications": [
+        {
+          "label": "mastoiditis",
+          "tier": "pink",
+          "triggers": [
+            "tender swelling behind the ear"
+          ],
+          "treatment": "ceftriaxone IM; paracetamol; refer urgently",
+          "modeled_status": "modeled"
+        },
+        {
+          "label": "acute_ear_infection",
+          "tier": "yellow",
+          "triggers": [
+            "pus draining <14 days",
+            "OR ear pain that wakes the child at night"
+          ],
+          "treatment": "amoxicillin 5 days; dry wicking if discharge; paracetamol; follow-up 5 days",
+          "modeled_status": "modeled"
+        },
+        {
+          "label": "chronic_ear_infection",
+          "tier": "yellow",
+          "triggers": [
+            "pus draining for 14 days or more"
+          ],
+          "treatment": "dry wicking; ear drops if available; follow-up 14 days",
+          "modeled_status": "modeled"
+        },
+        {
+          "label": "no_ear_infection",
+          "tier": "green",
+          "triggers": [
+            "no ear pain (or pain that does not wake child) AND no pus"
+          ],
+          "treatment": "no additional treatment",
+          "modeled_status": "modeled"
+        }
+      ]
+    },
+    "sore_throat_3y_plus": {
+      "page": 31,
+      "question": "Does the child (3 years or older) have a sore throat?",
+      "assess_signs": [
+        "rash?",
+        "runny nose?",
+        "cough?",
+        "enlarged tonsils",
+        "white/yellow exudate on tonsils",
+        "scarlatiniform rash"
+      ],
+      "classifications": [
+        {
+          "label": "streptococcal_sore_throat",
+          "tier": "yellow",
+          "triggers": [
+            "one or more of: enlarged tonsils, white/yellow exudate, scarlatiniform rash",
+            "AND no runny nose AND no cough"
+          ],
+          "treatment": "penicillin; treat pain/fever; soothe throat; follow-up 5 days",
+          "modeled_status": "new_2022",
+          "in_2014_generic": false,
+          "note_2014_check": "confirmed absent from the 2014 generic booklet -- genuine 2022 SA-adaptation addition."
+        },
+        {
+          "label": "sore_throat_non_streptococcal",
+          "tier": "green",
+          "triggers": [
+            "not enough signs for streptococcal sore throat"
+          ],
+          "treatment": "soothe throat with a safe remedy",
+          "modeled_status": "new_2022",
+          "in_2014_generic": false
+        }
+      ]
+    },
+    "malnutrition": {
+      "page": 32,
+      "question": "Check all children for acute malnutrition / nutritional status",
+      "assess_signs": [
+        "oedema of both feet",
+        "weight-for-length/height z-score",
+        "MUAC (>=6 months)",
+        "weight-for-age curve trend",
+        "mouth ulcers",
+        "appetite test if indicated"
+      ],
+      "classifications": [
+        {
+          "label": "complicated_severe_acute_malnutrition",
+          "tier": "pink",
+          "triggers": [
+            "oedema of both feet OR WFL/H z-score < -3 OR MUAC <11.5cm",
+            "AND one of: any danger sign / other red or yellow classification / weighs <=4kg / <6 months / fails appetite test"
+          ],
+          "treatment": "low-blood-sugar test; keep warm; antibiotic; F75 stabilising feed; Vitamin A; refer urgently",
+          "modeled_status": "extended"
+        },
+        {
+          "label": "uncomplicated_severe_acute_malnutrition",
+          "tier": "yellow",
+          "triggers": [
+            "WFL/H z-score < -3 OR MUAC <=11.5cm",
+            "AND no oedema",
+            "AND >=6 months AND weighs >4kg",
+            "AND no other red/yellow classification"
+          ],
+          "treatment": "amoxicillin 5d; Vitamin A; RUTF; counsel feeding; assess HIV/TB; follow-up 7 days",
+          "modeled_status": "extended"
+        },
+        {
+          "label": "moderate_acute_malnutrition",
+          "tier": "yellow",
+          "triggers": [
+            "WFL/H between -3 and -2 z-score OR MUAC 11.5-12.5cm",
+            "AND no oedema"
+          ],
+          "treatment": "Vitamin A + deworming; RUTF/supplements; assess HIV/TB; follow-up 7 days",
+          "modeled_status": "extended"
+        },
+        {
+          "label": "growth_problem",
+          "tier": "yellow",
+          "triggers": [
+            "losing weight OR unsatisfactory weight gain OR low/very low weight OR low length-for-age (<24 months)"
+          ],
+          "treatment": "assess feeding & counsel; deworm + Vitamin A if due; social-grant referral; follow-up 7-14 days",
+          "modeled_status": "new_2022",
+          "note": "the growth-curve/RTHB nutritional-status tier is a 2022 South-African-adaptation addition",
+          "in_2014_generic": false
+        },
+        {
+          "label": "overweight_obese",
+          "tier": "green",
+          "triggers": [
+            "WFL/H greater than +2 z-score"
+          ],
+          "treatment": "dietary counselling; healthy eating; physical activity",
+          "modeled_status": "new_2022",
+          "in_2014_generic": false
+        },
+        {
+          "label": "no_acute_malnutrition",
+          "tier": "green",
+          "triggers": [
+            "weight normal AND satisfactory weight gain AND WFL/H >= -2 z-score OR MUAC >=12.5cm"
+          ],
+          "treatment": "praise caregiver; assess feeding if <2 years",
+          "modeled_status": "extended"
+        }
+      ]
+    },
+    "anaemia": {
+      "page": 33,
+      "question": "Check all children for anaemia",
+      "assess_signs": [
+        "palmar pallor (severe / some)",
+        "haemoglobin if any pallor"
+      ],
+      "classifications": [
+        {
+          "label": "severe_anaemia",
+          "tier": "pink",
+          "triggers": [
+            "severe palmar pallor OR Hb <7 g/dl"
+          ],
+          "treatment": "refer urgently",
+          "modeled_status": "extended"
+        },
+        {
+          "label": "anaemia",
+          "tier": "yellow",
+          "triggers": [
+            "some palmar pallor OR Hb 7 up to 11 g/dl"
+          ],
+          "triggers_note": "do NOT give iron if child is receiving RUTF",
+          "treatment": "iron + iron-rich foods; deworm if due; follow-up 14 days",
+          "modeled_status": "extended"
+        },
+        {
+          "label": "no_anaemia",
+          "tier": "green",
+          "triggers": [
+            "no pallor"
+          ],
+          "treatment": "assess feeding & counsel if <2 years",
+          "modeled_status": "extended"
+        }
+      ]
+    },
+    "hiv": {
+      "page": 34,
+      "question": "Check all children for HIV infection (child test + mother status + features of HIV)",
+      "note": "Complex multi-input branch: child HIV test result, ARV prophylaxis status, mother's HIV status, and a count of clinical features of HIV. Full transcription of every outcome row deferred -- captured at the label level below. 2014 generic has a coarser HIV branch (CONFIRMED / HIV EXPOSED); the finer symptomatic/possible/unlikely tiers are 2022-SA.",
+      "classifications": [
+        {
+          "label": "confirmed_hiv_infection",
+          "tier": "pink",
+          "triggers": [
+            "positive HIV test in child OR child on ART"
+          ],
+          "treatment": "six steps for ART initiation; cotrimoxazole from 6 weeks; long-term follow-up",
+          "modeled_status": "engine_gap",
+          "in_2014_generic": true
+        },
+        {
+          "label": "hiv_exposed",
+          "tier": "yellow",
+          "triggers": [
+            "infant receiving ARV prophylaxis OR negative HIV test while still breastfeeding / <6 weeks since breastfeeding"
+          ],
+          "treatment": "complete ARV prophylaxis; repeat HIV PCR per schedule; follow-up",
+          "modeled_status": "engine_gap",
+          "in_2014_generic": true
+        },
+        {
+          "label": "suspected_symptomatic_hiv",
+          "tier": "yellow",
+          "triggers": [
+            "3 or more features of HIV infection"
+          ],
+          "treatment": "counsel & offer HIV testing; reclassify on result; long-term follow-up",
+          "modeled_status": "new_2022",
+          "in_2014_generic": false,
+          "note_2014_check": "2014 generic HIV branch is coarser (CONFIRMED / HIV EXPOSED only); this finer tier is 2022-SA."
+        },
+        {
+          "label": "possible_hiv_infection",
+          "tier": "yellow",
+          "triggers": [
+            "1-2 features of HIV infection OR mother HIV-positive"
+          ],
+          "treatment": "routine care incl. HIV testing; infant ARV prophylaxis if mother positive",
+          "modeled_status": "new_2022",
+          "in_2014_generic": false,
+          "note_2014_check": "2014 generic HIV branch is coarser (CONFIRMED / HIV EXPOSED only); this finer tier is 2022-SA."
+        },
+        {
+          "label": "hiv_infection_unlikely",
+          "tier": "green",
+          "triggers": [
+            "negative HIV test, all breastfeeding stopped >=6 weeks before test, no features"
+          ],
+          "treatment": "routine care; retest if indicated",
+          "modeled_status": "new_2022",
+          "in_2014_generic": false,
+          "note_2014_check": "2014 generic HIV branch is coarser (CONFIRMED / HIV EXPOSED only); this finer tier is 2022-SA."
+        }
+      ],
+      "features_of_hiv": [
+        "PNEUMONIA now",
+        "persistent diarrhoea now or in past 3 months",
+        "ever had ear discharge",
+        "low weight / unsatisfactory weight gain",
+        "enlarged lymph glands at >=2 sites (neck/axilla/groin)",
+        "oral thrush",
+        "parotid enlargement"
+      ]
+    }
+  },
+  "young_infant_0_2m": {
+    "_note": "The 0-2 month algorithm is a STRUCTURALLY DIFFERENT chart. adtc-sft-corpus-built records that the current pipeline treats young-infant prompts as a scope refusal. Transcribed here for completeness; promoting any of it out of 'refusal' is a scope decision + clinician sign-off, not just a parse.",
+    "bacterial_infection_and_jaundice": {
+      "page": 5,
+      "classifications": [
+        {
+          "label": "yi_very_severe_disease",
+          "tier": "pink",
+          "triggers": [
+            "convulsions",
+            "apnoea or breathing <30/min",
+            "fast breathing >60/min or severe chest indrawing/nasal flaring/grunting",
+            "bulging fontanelle",
+            "fever >=37.5C or hot / temp <35.5C or cold",
+            "only moves when stimulated",
+            "abundant eye pus / swollen eyelids",
+            "umbilical redness extending to skin or draining pus",
+            "many/severe skin pustules"
+          ],
+          "treatment": "diazepam if convulsing; oxygen; ceftriaxone IM; refer urgently",
+          "modeled_status": "engine_gap",
+          "in_2014_generic": true
+        },
+        {
+          "label": "yi_local_bacterial_infection",
+          "tier": "yellow",
+          "triggers": [
+            "purulent/sticky eye discharge OR red umbilicus OR skin pustules"
+          ],
+          "treatment": "cephalexin/flucloxacillin; chloramphenicol eye ointment; teach home care; follow-up 2 days",
+          "modeled_status": "engine_gap",
+          "in_2014_generic": true
+        },
+        {
+          "label": "yi_no_bacterial_infection",
+          "tier": "green",
+          "triggers": [
+            "none of the above signs"
+          ],
+          "treatment": "counsel on home care",
+          "modeled_status": "engine_gap",
+          "in_2014_generic": true
+        },
+        {
+          "label": "yi_severe_jaundice",
+          "tier": "pink",
+          "triggers": [
+            "any jaundice if age <24 hours OR yellow palms and soles"
+          ],
+          "treatment": "low-blood-sugar test; keep warm; refer urgently",
+          "modeled_status": "engine_gap",
+          "in_2014_generic": true
+        },
+        {
+          "label": "yi_jaundice",
+          "tier": "yellow",
+          "triggers": [
+            "jaundice appearing after 24 hours AND palms/soles not yellow"
+          ],
+          "treatment": "advise return if palms/soles yellow; follow-up 1 day; refer for assessment if >14 days old",
+          "modeled_status": "engine_gap",
+          "in_2014_generic": true
+        },
+        {
+          "label": "yi_no_jaundice",
+          "tier": "green",
+          "triggers": [
+            "no jaundice"
+          ],
+          "treatment": "counsel on home care",
+          "modeled_status": "engine_gap",
+          "in_2014_generic": true
+        }
+      ]
+    },
+    "diarrhoea": {
+      "page": 6,
+      "classifications": [
+        {
+          "label": "yi_severe_dehydration",
+          "tier": "pink",
+          "triggers": [
+            "two of: lethargic/unconscious, sunken eyes, skin pinch very slow",
+            "OR young infant <1 month of age"
+          ],
+          "treatment": "Plan C IV; ceftriaxone IM; refer urgently",
+          "modeled_status": "engine_gap",
+          "in_2014_generic": true
+        },
+        {
+          "label": "yi_some_dehydration",
+          "tier": "yellow",
+          "triggers": [
+            "two of: restless/irritable, sunken eyes, skin pinch slow"
+          ],
+          "treatment": "Plan B; zinc 14 days; follow-up 2 days",
+          "modeled_status": "engine_gap",
+          "in_2014_generic": true
+        },
+        {
+          "label": "yi_no_dehydration",
+          "tier": "green",
+          "triggers": [
+            "not enough signs for some/severe dehydration"
+          ],
+          "treatment": "Plan A; zinc 14 days; follow-up 2 days",
+          "modeled_status": "engine_gap",
+          "in_2014_generic": true
+        },
+        {
+          "label": "yi_severe_persistent_diarrhoea",
+          "tier": "pink",
+          "triggers": [
+            "diarrhoea 14 days or more"
+          ],
+          "treatment": "treat dehydration if present; refer urgently",
+          "modeled_status": "engine_gap",
+          "in_2014_generic": true
+        },
+        {
+          "label": "yi_dysentery",
+          "tier": "pink",
+          "triggers": [
+            "blood in stool"
+          ],
+          "treatment": "refer urgently; keep warm",
+          "modeled_status": "engine_gap",
+          "in_2014_generic": true
+        }
+      ]
+    },
+    "congenital_problems": {
+      "page": 7,
+      "note": "'Was the young infant examined by a health worker after birth? If no, assess for congenital problems.' Priority signs -> urgent referral; other abnormal signs -> refer for assessment; mother RPR-positive/untreated -> congenital syphilis path.",
+      "classifications": [
+        {
+          "label": "yi_congenital_priority",
+          "tier": "pink",
+          "triggers": [
+            "cleft palate/lip",
+            "imperforate anus",
+            "nose not patent",
+            "macrocephaly (head circ >39cm)",
+            "ambiguous genitalia",
+            "abdominal distention",
+            "very low birth weight <=2kg"
+          ],
+          "treatment": "pre-referral treatment; refer urgently",
+          "modeled_status": "new_2022",
+          "in_2014_generic": false,
+          "note_2014_check": "young-infant congenital-problems branch not found in the 2014 generic; 2022-SA addition."
+        },
+        {
+          "label": "yi_congenital_abnormal_signs",
+          "tier": "yellow",
+          "triggers": [
+            "one or more abnormal head/neck/limb/trunk signs (microcephaly, abnormal fontanelle/sutures, club foot, etc.)"
+          ],
+          "treatment": "keep warm; assess breastfeeding; refer for assessment",
+          "modeled_status": "new_2022",
+          "in_2014_generic": false,
+          "note_2014_check": "young-infant congenital-problems branch not found in the 2014 generic; 2022-SA addition."
+        },
+        {
+          "label": "yi_possible_congenital_syphilis",
+          "tier": "yellow",
+          "triggers": [
+            "mother RPR positive AND untreated / partially treated / treated <1 month before delivery"
+          ],
+          "treatment": "check for congenital syphilis signs; IM penicillin if none; refer if present",
+          "modeled_status": "new_2022",
+          "in_2014_generic": false
+        }
+      ]
+    },
+    "hiv_feeding_growth_immunisation": {
+      "pages": [
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "status": "NOT fully transcribed -- counselling/status-check tables (HIV testing schedule, breastfed/non-breastfed feeding & growth, immunisation status). Page refs recorded; transcribe on demand if promoted out of the young-infant refusal."
+    }
+  },
+  "not_transcribed": {
+    "note": "Pages that are treatment-dosing, counselling, ART protocol, skin problems, growth charts, or follow-up tables rather than assess/classify decision tables. Listed so nothing is silently dropped.",
+    "treatment_and_dosing": [
+      13,
+      14,
+      15,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "counselling_and_feeding": [
+      16,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24
+    ],
+    "art_protocol": [
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62
+    ],
+    "skin_problems": [
+      63,
+      64,
+      65,
+      66
+    ],
+    "follow_up_care_tables": [
+      17,
+      47,
+      48,
+      49,
+      50,
+      51
+    ],
+    "immunisation": [
+      36
+    ],
+    "growth_charts_and_reference": [
+      67,
+      70,
+      71,
+      72
+    ],
+    "image_only_or_blank": [
+      1,
+      2,
+      25,
+      68,
+      69,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79
+    ]
+  }
+}

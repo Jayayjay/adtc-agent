@@ -150,6 +150,30 @@ def sample_coherent_case(rng: random.Random) -> ChildAssessment:
     return repair_coherence(_random_case(rng), rng)
 
 
+# Rough WHO weight-for-age anchors (median-ish) for 2 months up to 5 years, used
+# only to render a plausible weight-appropriate DOSE in the answer -- weight is
+# NOT a classification input, so it lives here, not on ChildAssessment. Clamped
+# to [4.0, 18.9] kg so the weight-keyed dosing bands (amoxicillin/paracetamol
+# top out below 19 kg) always resolve for an in-range child.
+_WEIGHT_ANCHORS = [(2, 5.0), (6, 7.5), (12, 9.5), (24, 12.0), (36, 14.0), (60, 18.0)]
+
+
+def sample_weight_for_age(age_months: int, rng: random.Random) -> float:
+    """A plausible weight (kg, 1 dp) for a child of `age_months`, with spread."""
+    anchors = _WEIGHT_ANCHORS
+    if age_months <= anchors[0][0]:
+        base = anchors[0][1]
+    elif age_months >= anchors[-1][0]:
+        base = anchors[-1][1]
+    else:
+        for (a0, w0), (a1, w1) in zip(anchors, anchors[1:]):
+            if a0 <= age_months <= a1:
+                base = w0 + (w1 - w0) * (age_months - a0) / (a1 - a0)
+                break
+    jittered = base * rng.uniform(0.88, 1.12)
+    return round(min(18.9, max(4.0, jittered)), 1)
+
+
 def prune_to_decisive_branch(child: ChildAssessment, result: TriageResult) -> ChildAssessment:
     """
     Returns a copy holding only the fields assess() actually consulted to reach

@@ -216,6 +216,48 @@ class TestCorpusAgainstGroundTruth:
                 f"CLASSIFICATION: {expected.classification.value.upper()} "
             )
 
+    def test_dosing_line_matches_the_tables_no_drift(self):
+        """Every DOSING line must be exactly what the reviewed dosing tables
+        produce for the recorded weight+age -- no hallucinated or drifted dose."""
+        from src.sft.treatment import render_dosing
+
+        checked = 0
+        for r in self._corpus(400):
+            m = r["meta"]
+            content = r["messages"][-1]["content"]
+            dosing_lines = [ln[len("DOSING: "):] for ln in content.splitlines()
+                            if ln.startswith("DOSING: ")]
+            expected = render_dosing(m["condition_label"], m["weight_kg"], m["age_months"])
+            if expected is None:
+                assert not dosing_lines, f"{m['condition_label']} should have no DOSING line"
+            else:
+                assert dosing_lines == [expected], (m["condition_label"], dosing_lines, expected)
+                checked += 1
+        assert checked > 0, "no dosed cases generated — the dosing audit went untested"
+
+    def test_extended_dosing_line_matches_the_tables_no_drift(self):
+        """Same no-drift guarantee for --include-extended records (rendered by a
+        SEPARATE path, render_extended_answer)."""
+        from src.sft.treatment import render_dosing
+
+        # young-infant records are extended but carry no weight_kg (no dosing by
+        # design -- their treatment is IM antibiotics / referral, not in the tables).
+        recs = [r for r in generate(num_triage=200, seed=5, chat_path=None, include_extended=True)
+                if r["meta"].get("extended") and "weight_kg" in r["meta"]]
+        checked = 0
+        for r in recs:
+            m = r["meta"]
+            content = r["messages"][-1]["content"]
+            dosing_lines = [ln[len("DOSING: "):] for ln in content.splitlines()
+                            if ln.startswith("DOSING: ")]
+            expected = render_dosing(m["condition_label"], m["weight_kg"], m["age_months"])
+            if expected is None:
+                assert not dosing_lines, f"{m['condition_label']} should have no DOSING line"
+            else:
+                assert dosing_lines == [expected], (m["condition_label"], dosing_lines, expected)
+                checked += 1
+        assert checked > 0, "no dosed extended cases generated — the extended dosing audit went untested"
+
     def test_fields_round_trip_through_json(self):
         """meta.fields is only useful to an auditor if it survives JSONL."""
         import json

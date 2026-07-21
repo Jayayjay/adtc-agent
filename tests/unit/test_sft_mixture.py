@@ -271,16 +271,19 @@ class TestExtendedExamples:
     make_extended_example turns them into classifications from
     src/sft/extended_protocol.py -- addressing the risk, gated behind sign-off."""
 
-    def test_produces_all_four_branches(self):
+    def test_produces_every_extended_branch(self):
         from src.sft.mixture import make_extended_example
 
         rng = random.Random(0)
         branches = set()
-        for i in range(400):
+        for i in range(1200):
             r = make_extended_example(rng, f"e{i}")
             if r:
                 branches.add(r["meta"]["branch"])
-        assert branches == {"malaria", "measles", "anaemia", "malnutrition"}
+        assert branches == {
+            "malaria", "measles", "anaemia", "malnutrition",
+            "wheeze", "persistent_diarrhoea", "dysentery", "sore_throat", "growth", "hiv",
+        }
 
     def test_answer_matches_the_classifier(self):
         """The rendered header severity must equal what the extended classifier
@@ -347,3 +350,60 @@ class TestTriageGuard:
         rec = make_triage_example(child, result, rng, VignetteStyle.CHW_NOTES, "sft_y",
                                   acknowledged_extra="Also has a fever.")
         assert "Also has a fever." in rec["messages"][-1]["content"]
+
+
+class TestAuxiliaryQueryKinds:
+    """The dosing/treatment/follow-up/differential Q&A kinds. Each answer is
+    looked up deterministically -- these tests pin that they are well-formed and
+    that the dosing/follow-up answers match the tables (no drift)."""
+
+    def test_dosing_query_matches_the_tables(self):
+        from src.sft.mixture import make_dosing_query_example
+        from src.tools import imci_dosing
+
+        rng = random.Random(0)
+        for i in range(60):
+            r = make_dosing_query_example(rng, f"d{i}")
+            assert r["meta"]["kind"] == "dosing_query"
+            ans = r["messages"][-1]["content"]
+            assert ans.startswith("Give ") and ans.endswith(".")
+            # the drug name recorded must be a real, renderable drug
+            assert r["meta"]["drug"] in imci_dosing.drugs()
+
+    def test_followup_query_matches_the_tables(self):
+        from src.sft.mixture import make_followup_query_example
+        from src.tools import imci_dosing
+
+        rng = random.Random(0)
+        for i in range(40):
+            r = make_followup_query_example(rng, f"f{i}")
+            assert r["meta"]["kind"] == "followup_query"
+            interval = imci_dosing.follow_up_for(r["meta"]["condition_label"])
+            assert interval and interval in r["messages"][-1]["content"]
+
+    def test_treatment_query_dosing_matches_the_tables(self):
+        from src.sft.mixture import make_treatment_query_example
+        from src.sft.treatment import render_dosing
+
+        rng = random.Random(0)
+        seen = 0
+        for i in range(120):
+            r = make_treatment_query_example(rng, f"t{i}")
+            if r is None:
+                continue
+            seen += 1
+            m = r["meta"]
+            expected = render_dosing(m["condition_label"], m["weight_kg"], m["age_months"])
+            assert expected is not None
+            assert expected in r["messages"][-1]["content"]
+        assert seen > 0
+
+    def test_differential_is_from_the_closed_set(self):
+        from src.sft.mixture import make_differential_example, _DIFFERENTIALS
+
+        explanations = {e for _, _, e in _DIFFERENTIALS}
+        rng = random.Random(0)
+        for i in range(30):
+            r = make_differential_example(rng, f"x{i}")
+            assert r["meta"]["kind"] == "differential"
+            assert r["messages"][-1]["content"] in explanations

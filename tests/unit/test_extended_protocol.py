@@ -24,10 +24,18 @@ from src.sft.extended_protocol import (
     TEST_NOT_DONE,
     TEST_POSITIVE,
     ExtendedAssessment,
+    HIV_TEST_NEGATIVE,
+    HIV_TEST_POSITIVE,
     classify_anaemia,
+    classify_dysentery,
     classify_fever_malaria,
+    classify_growth,
+    classify_hiv,
     classify_malnutrition,
     classify_measles,
+    classify_persistent_diarrhoea,
+    classify_sore_throat,
+    classify_wheeze,
     has_measles,
 )
 from src.tools.imci_protocol import Classification
@@ -213,6 +221,128 @@ class TestMalnutrition:
         assert r.classification is Classification.MILD
 
 
+class TestWheeze:
+    def test_no_wheeze_returns_none(self):
+        assert classify_wheeze(A()) is None
+
+    def test_wheeze_is_moderate(self):
+        assert classify_wheeze(A(wheeze=True)).condition_label == "wheeze"
+
+    def test_wheeze_with_danger_sign_is_severe(self):
+        r = classify_wheeze(A(wheeze=True, danger_signs_present=["lethargic_or_unconscious"]))
+        assert r.classification is Classification.SEVERE
+
+
+class TestPersistentDiarrhoea:
+    def test_under_14_days_is_none(self):
+        assert classify_persistent_diarrhoea(A(diarrhoea=True, diarrhoea_days=7)) is None
+
+    def test_14_days_no_dehydration_is_moderate(self):
+        r = classify_persistent_diarrhoea(A(diarrhoea=True, diarrhoea_days=14))
+        assert r.condition_label == "persistent_diarrhoea"
+
+    def test_14_days_with_dehydration_is_severe(self):
+        r = classify_persistent_diarrhoea(A(diarrhoea=True, diarrhoea_days=21, dehydration_present=True))
+        assert r.classification is Classification.SEVERE
+        assert r.condition_label == "severe_persistent_diarrhoea"
+
+    def test_losing_weight_makes_it_severe(self):
+        r = classify_persistent_diarrhoea(A(diarrhoea=True, diarrhoea_days=16, losing_weight=True))
+        assert r.classification is Classification.SEVERE
+
+
+class TestDysentery:
+    def test_no_blood_is_none(self):
+        assert classify_dysentery(A(diarrhoea=True)) is None
+
+    def test_blood_over_12mo_no_dehydration_is_moderate(self):
+        r = classify_dysentery(A(age_months=24, diarrhoea=True, blood_in_stool=True))
+        assert r.condition_label == "dysentery"
+
+    def test_blood_under_12mo_is_severe(self):
+        r = classify_dysentery(A(age_months=8, diarrhoea=True, blood_in_stool=True))
+        assert r.classification is Classification.SEVERE
+        assert r.condition_label == "severe_dysentery"
+
+    def test_blood_with_dehydration_is_severe(self):
+        r = classify_dysentery(A(age_months=30, diarrhoea=True, blood_in_stool=True, dehydration_present=True))
+        assert r.classification is Classification.SEVERE
+
+
+class TestSoreThroat:
+    def test_under_3_years_not_assessed(self):
+        assert classify_sore_throat(A(age_months=24, sore_throat=True, tonsil_exudate=True)) is None
+
+    def test_strep_signs_without_cold_is_streptococcal(self):
+        r = classify_sore_throat(A(age_months=48, sore_throat=True, tonsil_exudate=True))
+        assert r.condition_label == "streptococcal_sore_throat"
+
+    def test_cough_or_runny_nose_makes_it_non_streptococcal(self):
+        r = classify_sore_throat(A(age_months=48, sore_throat=True, tonsil_exudate=True, cough=True))
+        assert r.condition_label == "sore_throat_non_streptococcal"
+
+    def test_no_strep_signs_is_non_streptococcal(self):
+        r = classify_sore_throat(A(age_months=48, sore_throat=True))
+        assert r.condition_label == "sore_throat_non_streptococcal"
+
+
+class TestGrowth:
+    def test_no_problem_is_none(self):
+        assert classify_growth(A()) is None
+
+    def test_losing_weight_is_growth_problem(self):
+        assert classify_growth(A(losing_weight=True)).condition_label == "growth_problem"
+
+    def test_low_weight_for_age_is_growth_problem(self):
+        assert classify_growth(A(low_weight_for_age=True)).condition_label == "growth_problem"
+
+
+class TestHIV:
+    def test_no_signals_returns_none(self):
+        assert classify_hiv(A()) is None
+
+    def test_positive_test_is_confirmed(self):
+        assert classify_hiv(A(hiv_test=HIV_TEST_POSITIVE)).condition_label == "confirmed_hiv_infection"
+
+    def test_on_art_is_confirmed(self):
+        assert classify_hiv(A(child_on_art=True)).condition_label == "confirmed_hiv_infection"
+
+    def test_arv_prophylaxis_is_exposed(self):
+        assert classify_hiv(A(infant_on_arv_prophylaxis=True)).condition_label == "hiv_exposed"
+
+    def test_negative_while_breastfeeding_is_exposed(self):
+        r = classify_hiv(A(hiv_test=HIV_TEST_NEGATIVE, breastfeeding_at_or_near_test=True))
+        assert r.condition_label == "hiv_exposed"
+
+    def test_three_features_is_suspected(self):
+        r = classify_hiv(A(hiv_oral_thrush=True, hiv_low_weight=True, hiv_pneumonia_now=True))
+        assert r.condition_label == "suspected_symptomatic_hiv"
+
+    def test_one_feature_is_possible(self):
+        assert classify_hiv(A(hiv_oral_thrush=True)).condition_label == "possible_hiv_infection"
+
+    def test_mother_positive_alone_is_possible(self):
+        assert classify_hiv(A(mother_hiv_positive=True)).condition_label == "possible_hiv_infection"
+
+    def test_negative_off_breastfeeding_no_features_is_unlikely(self):
+        r = classify_hiv(A(hiv_test=HIV_TEST_NEGATIVE, breastfeeding_stopped_ge_6wk=True))
+        assert r.condition_label == "hiv_infection_unlikely"
+        assert r.classification is Classification.MILD
+
+    def test_confirmed_beats_feature_count(self):
+        """A positive test wins even with many features -- ordering matters."""
+        r = classify_hiv(A(hiv_test=HIV_TEST_POSITIVE, hiv_oral_thrush=True,
+                           hiv_low_weight=True, hiv_pneumonia_now=True))
+        assert r.condition_label == "confirmed_hiv_infection"
+
+    def test_no_hiv_tier_is_pink(self):
+        """ART is not urgent -- no HIV classification should be SEVERE/pink."""
+        for kw in (dict(hiv_test=HIV_TEST_POSITIVE), dict(infant_on_arv_prophylaxis=True),
+                   dict(hiv_oral_thrush=True, hiv_low_weight=True, hiv_pneumonia_now=True),
+                   dict(mother_hiv_positive=True)):
+            assert classify_hiv(A(**kw)).classification is not Classification.SEVERE
+
+
 class TestLabelInventory:
     def test_every_reachable_label_is_registered(self):
         """EXTENDED_LABELS drives the SFT stratifier; a label the functions can
@@ -234,6 +364,20 @@ class TestLabelInventory:
             classify_malnutrition(A(muac_mm=110, appetite_test_passed=True)),
             classify_malnutrition(A(muac_mm=120)),
             classify_malnutrition(A(muac_mm=140)),
+            classify_wheeze(A(wheeze=True)),
+            classify_wheeze(A(wheeze=True, danger_signs_present=["convulsions"])),
+            classify_persistent_diarrhoea(A(diarrhoea=True, diarrhoea_days=21, dehydration_present=True)),
+            classify_persistent_diarrhoea(A(diarrhoea=True, diarrhoea_days=21)),
+            classify_dysentery(A(age_months=8, diarrhoea=True, blood_in_stool=True)),
+            classify_dysentery(A(age_months=24, diarrhoea=True, blood_in_stool=True)),
+            classify_sore_throat(A(age_months=48, sore_throat=True, tonsil_exudate=True)),
+            classify_sore_throat(A(age_months=48, sore_throat=True, cough=True)),
+            classify_growth(A(losing_weight=True)),
+            classify_hiv(A(hiv_test=HIV_TEST_POSITIVE)),
+            classify_hiv(A(infant_on_arv_prophylaxis=True)),
+            classify_hiv(A(hiv_oral_thrush=True, hiv_low_weight=True, hiv_pneumonia_now=True)),
+            classify_hiv(A(hiv_oral_thrush=True)),
+            classify_hiv(A(hiv_test=HIV_TEST_NEGATIVE, breastfeeding_stopped_ge_6wk=True)),
         ]
         for r in cases:
             if r is not None:

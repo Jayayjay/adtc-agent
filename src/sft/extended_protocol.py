@@ -50,6 +50,31 @@ not a general "please read"):
      runny nose / red eyes.
   5. Nigeria's national adaptation may differ on antimalarial choice and
      follow-up intervals; treatment strings here are the WHO generic ones.
+  6. WHEEZE: a wheezing child with severe cough signs (chest indrawing, stridor,
+     SpO2<90%) is handled by imci_protocol's cough branch, NOT here. This module
+     only classifies the non-severe wheeze (salbutamol by spacer) and the
+     danger-sign case. Confirm that split is what the adaptation wants.
+  7. PERSISTENT DIARRHOEA: >=14 days = persistent; severe if dehydration OR
+     losing weight OR a danger sign. Confirm the "losing weight" trigger.
+  8. DYSENTERY: blood in stool; severe if dehydration OR age <12 months OR a
+     danger sign; otherwise ciprofloxacin 3 days. Confirm the <12mo rule and the
+     first-line antibiotic against the national adaptation.
+  9. SORE THROAT: only assessed from 3 years (36 months). Streptococcal =
+     enlarged tonsils / exudate / scarlatiniform rash AND no runny nose AND no
+     cough. Confirm the age cutoff and penicillin choice.
+ 10. GROWTH PROBLEM: fires on losing weight OR low weight-for-age -- a 2022 SA
+     RTHB tier absent from the 2014 generic. Confirm this belongs in scope at
+     all, and its threshold definitions.
+ 11. These branches are the 2022-booklet gaps (see data/imci_2022/README.md).
+     The young-infant (0-2mo) chart is still NOT modelled -- it stays a
+     scope_refusal.
+ 12. HIV: the 5 tiers (confirmed / exposed / suspected symptomatic / possible /
+     unlikely) and their triggers -- test result, ARV/ART status, mother's
+     status, and the 3+/1-2 feature count. Confirm the feature list, the "6
+     weeks after breastfeeding" rule, and the SEVERITY mapping (all MODERATE
+     except unlikely=MILD; none pink, since ART is not urgent). The finer
+     symptomatic/possible tiers are 2022-SA; the 2014 generic has only a coarse
+     confirmed/exposed split.
 """
 
 from __future__ import annotations
@@ -71,6 +96,13 @@ TEST_POSITIVE = "positive"
 TEST_NEGATIVE = "negative"
 TEST_NOT_DONE = "not_done"
 MALARIA_TESTS = (TEST_POSITIVE, TEST_NEGATIVE, TEST_NOT_DONE)
+
+# HIV test result (kept separate from the malaria test constants above so the
+# two can't be confused at a call site, even though the string values overlap).
+HIV_TEST_POSITIVE = "positive"
+HIV_TEST_NEGATIVE = "negative"
+HIV_TEST_NOT_DONE = "not_done"
+HIV_TESTS = (HIV_TEST_POSITIVE, HIV_TEST_NEGATIVE, HIV_TEST_NOT_DONE)
 
 
 @dataclass
@@ -114,6 +146,50 @@ class ExtendedAssessment:
     appetite_test_passed: bool | None = None
     medical_complication: bool = False
 
+    # Wheeze -- 2022 cough sub-branch (present in the 2014 generic too).
+    wheeze: bool = False
+
+    # Diarrhoea sub-branches -- persistent diarrhoea (>=14 days) and dysentery
+    # (blood in stool). Both are SEPARATE simultaneous classifications that the
+    # core scaffold's dehydration branch does not produce.
+    diarrhoea: bool = False
+    diarrhoea_days: int | None = None
+    blood_in_stool: bool = False
+    dehydration_present: bool = False
+    losing_weight: bool = False
+
+    # Sore throat (only assessed from 3 years) -- 2022 SA addition.
+    sore_throat: bool = False
+    enlarged_tonsils: bool = False
+    tonsil_exudate: bool = False
+    scarlatiniform_rash: bool = False
+    runny_nose: bool = False
+    cough: bool = False
+
+    # Growth / nutritional status (2022 RTHB tier).
+    low_weight_for_age: bool = False
+
+    # HIV -- "Then check all children for HIV infection". A multi-input branch:
+    # the child's own test, ARV status, the mother's status, and a count of the
+    # clinical "features of HIV infection".
+    hiv_test: str = HIV_TEST_NOT_DONE
+    child_on_art: bool = False
+    infant_on_arv_prophylaxis: bool = False
+    # breastfeeding at the time of the test, or within the 6 weeks before it --
+    # a negative test then does not rule out infection.
+    breastfeeding_at_or_near_test: bool = False
+    breastfeeding_stopped_ge_6wk: bool = False
+    mother_hiv_positive: bool = False
+    # Features of HIV infection (a subset of the booklet's list, enough to drive
+    # the 3+/1-2 feature-count tiers and to be described in a vignette).
+    hiv_pneumonia_now: bool = False
+    hiv_persistent_diarrhoea: bool = False
+    hiv_ever_ear_discharge: bool = False
+    hiv_low_weight: bool = False
+    hiv_enlarged_lymph_nodes: bool = False
+    hiv_oral_thrush: bool = False
+    hiv_parotid_enlargement: bool = False
+
     def __post_init__(self):
         # Same class of bug imci_protocol.ChildAssessment guards: a str is a
         # valid iterable of str, so "convulsions" would iterate to characters,
@@ -128,6 +204,8 @@ class ExtendedAssessment:
             raise ValueError(f"malaria_risk must be one of {MALARIA_RISKS}, got {self.malaria_risk!r}")
         if self.malaria_test not in MALARIA_TESTS:
             raise ValueError(f"malaria_test must be one of {MALARIA_TESTS}, got {self.malaria_test!r}")
+        if self.hiv_test not in HIV_TESTS:
+            raise ValueError(f"hiv_test must be one of {HIV_TESTS}, got {self.hiv_test!r}")
 
 
 def _has_danger_sign(a: ExtendedAssessment) -> bool:
@@ -448,6 +526,268 @@ def classify_malnutrition(a: ExtendedAssessment) -> TriageResult:
     )
 
 
+# --------------------------------------------------------------------------
+# WHEEZE. SOURCE: cough/difficult-breathing panel, "AND IF WHEEZE, ASK".
+# Present in both the 2014 generic and 2022. The core scaffold models no wheeze.
+# This standalone sub-branch classifies the non-severe wheeze case; a wheezing
+# child with severe cough signs is handled by imci_protocol's cough branch.
+# --------------------------------------------------------------------------
+def classify_wheeze(a: ExtendedAssessment) -> TriageResult | None:
+    if not a.wheeze:
+        return None
+    reasoning = ["The child has wheeze."]
+    if _has_danger_sign(a):
+        reasoning.append("There is a general danger sign, so give salbutamol and refer urgently.")
+        return TriageResult(
+            classification=Classification.SEVERE,
+            condition_label="wheeze_with_danger_sign",
+            reasoning=reasoning,
+            recommended_action=(
+                "Give salbutamol by spacer. Give the first dose of an appropriate antibiotic and "
+                "refer URGENTLY to hospital."
+            ),
+        )
+    return TriageResult(
+        classification=Classification.MODERATE,
+        condition_label="wheeze",
+        reasoning=reasoning,
+        recommended_action=(
+            "Give salbutamol by spacer for 5 days. Follow up in 5 days if the child is still "
+            "wheezing. If a cough lasts more than 14 days or the wheeze is recurrent, assess for "
+            "TB or asthma."
+        ),
+    )
+
+
+# --------------------------------------------------------------------------
+# PERSISTENT DIARRHOEA (>=14 days). SOURCE: "AND IF DIARRHOEA 14 DAYS OR MORE".
+# A separate simultaneous classification alongside the core dehydration branch.
+# --------------------------------------------------------------------------
+def classify_persistent_diarrhoea(a: ExtendedAssessment) -> TriageResult | None:
+    if not (a.diarrhoea and a.diarrhoea_days is not None and a.diarrhoea_days >= 14):
+        return None
+    if a.dehydration_present or a.losing_weight or _has_danger_sign(a):
+        why = []
+        if a.dehydration_present:
+            why.append("dehydration is present")
+        if a.losing_weight:
+            why.append("the child is losing weight")
+        if _has_danger_sign(a):
+            why.append("there is a general danger sign")
+        return TriageResult(
+            classification=Classification.SEVERE,
+            condition_label="severe_persistent_diarrhoea",
+            reasoning=[f"Diarrhoea has lasted 14 days or more and {', '.join(why)}."],
+            recommended_action=(
+                "Treat dehydration before referral unless the child has another severe "
+                "classification. Give an extra dose of vitamin A. Refer URGENTLY to hospital."
+            ),
+        )
+    return TriageResult(
+        classification=Classification.MODERATE,
+        condition_label="persistent_diarrhoea",
+        reasoning=["Diarrhoea has lasted 14 days or more with no visible dehydration."],
+        recommended_action=(
+            "Counsel the caregiver on feeding for persistent diarrhoea. Give an extra dose of "
+            "vitamin A and give zinc for 14 days. Follow up in 5 days."
+        ),
+    )
+
+
+# --------------------------------------------------------------------------
+# DYSENTERY (blood in stool). SOURCE: "AND IF BLOOD IN STOOL".
+# --------------------------------------------------------------------------
+def classify_dysentery(a: ExtendedAssessment) -> TriageResult | None:
+    if not (a.diarrhoea and a.blood_in_stool):
+        return None
+    if a.dehydration_present or a.age_months < 12 or _has_danger_sign(a):
+        why = []
+        if a.dehydration_present:
+            why.append("dehydration is present")
+        if a.age_months < 12:
+            why.append("the child is less than 12 months old")
+        if _has_danger_sign(a):
+            why.append("there is a general danger sign")
+        return TriageResult(
+            classification=Classification.SEVERE,
+            condition_label="severe_dysentery",
+            reasoning=[f"There is blood in the stool and {', '.join(why)}."],
+            recommended_action=(
+                "Treat the child to prevent low blood sugar, keep the child warm, and refer "
+                "URGENTLY to hospital."
+            ),
+        )
+    return TriageResult(
+        classification=Classification.MODERATE,
+        condition_label="dysentery",
+        reasoning=["There is blood in the stool, the child is 12 months or older, and there is "
+                   "no dehydration."],
+        recommended_action=(
+            "Treat for 3 days with ciprofloxacin. Advise the mother when to return immediately. "
+            "Follow up in 2 days."
+        ),
+    )
+
+
+# --------------------------------------------------------------------------
+# SORE THROAT (only from 3 years). SOURCE: 2022 SA "Does the child have a sore
+# throat?" -- absent from the 2014 generic.
+# --------------------------------------------------------------------------
+def classify_sore_throat(a: ExtendedAssessment) -> TriageResult | None:
+    if not a.sore_throat:
+        return None
+    if a.age_months < 36:
+        # The chart only assesses sore throat from 3 years; below that there is
+        # no classification to make here.
+        return None
+    strep_signs = a.enlarged_tonsils or a.tonsil_exudate or a.scarlatiniform_rash
+    if strep_signs and not a.runny_nose and not a.cough:
+        why = []
+        if a.enlarged_tonsils:
+            why.append("enlarged tonsils")
+        if a.tonsil_exudate:
+            why.append("white or yellow exudate on the tonsils")
+        if a.scarlatiniform_rash:
+            why.append("a scarlatiniform rash")
+        return TriageResult(
+            classification=Classification.MODERATE,
+            condition_label="streptococcal_sore_throat",
+            reasoning=[f"There is {', '.join(why)}, with no runny nose and no cough, which points "
+                       f"to a streptococcal sore throat."],
+            recommended_action=(
+                "Give penicillin. Treat pain and fever. Soothe the throat with a safe remedy. "
+                "Follow up in 5 days if symptoms are worse or not resolving."
+            ),
+        )
+    return TriageResult(
+        classification=Classification.MILD,
+        condition_label="sore_throat_non_streptococcal",
+        reasoning=["There are not enough signs to classify this as a streptococcal sore throat."],
+        recommended_action="Soothe the throat with a safe remedy.",
+    )
+
+
+# --------------------------------------------------------------------------
+# GROWTH PROBLEM (RTHB weight curve). SOURCE: 2022 SA nutritional-status tier.
+# Fires only when a growth problem is present; a normal curve is not a
+# classification this sub-branch emits.
+# --------------------------------------------------------------------------
+def classify_growth(a: ExtendedAssessment) -> TriageResult | None:
+    if not (a.losing_weight or a.low_weight_for_age):
+        return None
+    why = []
+    if a.losing_weight:
+        why.append("the child is losing weight")
+    if a.low_weight_for_age:
+        why.append("the weight-for-age is low")
+    return TriageResult(
+        classification=Classification.MODERATE,
+        condition_label="growth_problem",
+        reasoning=[f"On the weight curve, {', '.join(why)}."],
+        recommended_action=(
+            "Assess feeding and counsel the caregiver on the feeding recommendations. Deworm and "
+            "give vitamin A if due. Advise the mother when to return immediately. Follow up in "
+            "7 days if there is a feeding problem, otherwise in 14 days."
+        ),
+    )
+
+
+# --------------------------------------------------------------------------
+# HIV. SOURCE: 2022 SA "Then check all children for HIV infection" (the 2014
+# generic has a coarser CONFIRMED/EXPOSED branch; the finer symptomatic/possible
+# tiers are the 2022 SA adaptation). Multi-input: the child's test, ARV status,
+# the mother's status, and a count of clinical features.
+#
+# SEVERITY NOTE (for review): HIV is not danger-sign triage. The booklet states
+# ART initiation is NOT urgent (stabilise first), so no HIV tier is coded pink;
+# a child with HIV AND a danger sign is referred by the danger-sign path, not
+# here. Confirmed/exposed/suspected/possible are coded MODERATE (specific
+# management + follow-up) and "unlikely" MILD (routine care). Confirm this
+# mapping is acceptable for the national adaptation.
+# --------------------------------------------------------------------------
+_HIV_FEATURE_FIELDS = (
+    "hiv_pneumonia_now", "hiv_persistent_diarrhoea", "hiv_ever_ear_discharge",
+    "hiv_low_weight", "hiv_enlarged_lymph_nodes", "hiv_oral_thrush", "hiv_parotid_enlargement",
+)
+
+
+def _hiv_feature_count(a: ExtendedAssessment) -> int:
+    return sum(bool(getattr(a, f)) for f in _HIV_FEATURE_FIELDS)
+
+
+def classify_hiv(a: ExtendedAssessment) -> TriageResult | None:
+    """Returns None when there is nothing to check (no test, no ARV status, no
+    mother status, no feature) -- the honest 'no HIV assessment to report'."""
+    count = _hiv_feature_count(a)
+
+    if a.hiv_test == HIV_TEST_POSITIVE or a.child_on_art:
+        return TriageResult(
+            classification=Classification.MODERATE,
+            condition_label="confirmed_hiv_infection",
+            reasoning=["The child has a positive HIV test or is already on ART, so HIV infection "
+                       "is confirmed."],
+            recommended_action=(
+                "Follow the steps to initiate ART. Give cotrimoxazole prophylaxis from 6 weeks of "
+                "age. Ask about the caregiver's health and manage appropriately. Provide long-term "
+                "follow-up. ART initiation is not urgent -- stabilise any severe illness first."
+            ),
+        )
+
+    if a.infant_on_arv_prophylaxis or (a.hiv_test == HIV_TEST_NEGATIVE and a.breastfeeding_at_or_near_test):
+        return TriageResult(
+            classification=Classification.MODERATE,
+            condition_label="hiv_exposed",
+            reasoning=["The child is HIV-exposed: on ARV prophylaxis, or with a negative test while "
+                       "still breastfeeding or within 6 weeks of breastfeeding, so infection is not "
+                       "yet ruled out."],
+            recommended_action=(
+                "Complete the appropriate infant ARV prophylaxis. Repeat HIV PCR testing per the "
+                "schedule and reclassify on the result. Ask about the caregiver's health and "
+                "provide follow-up care."
+            ),
+        )
+
+    if count >= 3:
+        return TriageResult(
+            classification=Classification.MODERATE,
+            condition_label="suspected_symptomatic_hiv",
+            reasoning=[f"There are {count} features of HIV infection (three or more), so "
+                       f"symptomatic HIV is suspected."],
+            recommended_action=(
+                "Counsel and offer HIV testing for the child and reclassify on the result. Counsel "
+                "the caregiver about her own health and offer testing. Provide long-term follow-up."
+            ),
+        )
+
+    if count >= 1 or a.mother_hiv_positive:
+        why = ("the mother is HIV-positive" if a.mother_hiv_positive and count == 0
+               else f"there {'is' if count == 1 else 'are'} {count} feature(s) of HIV infection")
+        return TriageResult(
+            classification=Classification.MODERATE,
+            condition_label="possible_hiv_infection",
+            reasoning=[f"HIV infection is possible because {why}."],
+            recommended_action=(
+                "Provide routine care including HIV testing for the child. Counsel the caregiver "
+                "about her health and offer testing and treatment as needed. Reclassify on the "
+                "test result."
+            ),
+        )
+
+    if a.hiv_test == HIV_TEST_NEGATIVE and a.breastfeeding_stopped_ge_6wk:
+        return TriageResult(
+            classification=Classification.MILD,
+            condition_label="hiv_infection_unlikely",
+            reasoning=["The HIV test is negative, all breastfeeding stopped 6 weeks or more before "
+                       "the test, and there are no features of HIV infection."],
+            recommended_action=(
+                "Provide routine care. Repeat HIV testing only if new features appear or exposure "
+                "is ongoing."
+            ),
+        )
+
+    return None
+
+
 # Every label this module can produce, for the SFT stratifier.
 EXTENDED_LABELS = (
     "very_severe_febrile_disease",
@@ -464,4 +804,20 @@ EXTENDED_LABELS = (
     "uncomplicated_severe_acute_malnutrition",
     "moderate_acute_malnutrition",
     "no_acute_malnutrition",
+    # 2022 / engine-gap sick-child branches
+    "wheeze",
+    "wheeze_with_danger_sign",
+    "severe_persistent_diarrhoea",
+    "persistent_diarrhoea",
+    "severe_dysentery",
+    "dysentery",
+    "streptococcal_sore_throat",
+    "sore_throat_non_streptococcal",
+    "growth_problem",
+    # HIV tiers
+    "confirmed_hiv_infection",
+    "hiv_exposed",
+    "suspected_symptomatic_hiv",
+    "possible_hiv_infection",
+    "hiv_infection_unlikely",
 )

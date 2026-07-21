@@ -181,8 +181,11 @@ _RULES: list[tuple[re.Pattern, object]] = [
         ),
     ),
     (
-        re.compile(r"^Fever with stiff neck\.$"),
-        lambda m: "The child has fever with a stiff neck, which points to very severe febrile disease.",
+        # stiff neck and/or bulging fontanelle -- both are severe fever triggers.
+        re.compile(r"^Fever with (stiff neck|bulging fontanelle|stiff neck and bulging fontanelle)\.$"),
+        lambda m: (
+            f"The child has fever with a {m.group(1)}, which points to very severe febrile disease."
+        ),
     ),
     (
         re.compile(r"^Fever without stiff neck or other danger signs\.$"),
@@ -266,6 +269,8 @@ def render_answer(
     result: TriageResult,
     rng: random.Random,
     acknowledged_extra: str | None = None,
+    weight_kg: float | None = None,
+    age_months: int | None = None,
 ) -> str:
     """
     Full answer: rigid header, then varied body.
@@ -274,10 +279,25 @@ def render_answer(
     takes the cough branch first" note for the ~15% of cases that deliberately
     keep a non-decisive symptom, so multi-symptom prompts don't train the model
     to silently drop what it was told.
+
+    When `weight_kg` and `age_months` are given, a DOSING line is appended with
+    the specific doses the classification calls for -- every number looked up
+    deterministically from the reviewed dosing tables (src/sft/treatment.py),
+    never written here. Omit them and the answer is classification-only, exactly
+    as before.
     """
     lines = [render_header(result), ""]
     lines.append(f"WHY: {render_reasoning(result)}")
     lines.append(f"ACTION: {render_action(result)}")
+
+    if weight_kg is not None and age_months is not None:
+        # Imported here to keep answer.py's import graph free of the dosing
+        # tables when a caller renders classification-only.
+        from src.sft.treatment import render_dosing
+
+        dosing = render_dosing(result.condition_label, weight_kg, age_months)
+        if dosing:
+            lines.append(f"DOSING: {dosing}")
 
     if result.secondary_findings:
         lines.append("ALSO: " + " ".join(result.secondary_findings))

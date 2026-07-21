@@ -57,6 +57,20 @@ EXTENDED_LABEL_TEXT = {
     "uncomplicated_severe_acute_malnutrition": "Uncomplicated severe acute malnutrition",
     "moderate_acute_malnutrition": "Moderate acute malnutrition",
     "no_acute_malnutrition": "No acute malnutrition",
+    "wheeze": "Wheeze",
+    "wheeze_with_danger_sign": "Wheeze with a general danger sign",
+    "severe_persistent_diarrhoea": "Severe persistent diarrhoea",
+    "persistent_diarrhoea": "Persistent diarrhoea",
+    "severe_dysentery": "Severe dysentery",
+    "dysentery": "Dysentery",
+    "streptococcal_sore_throat": "Streptococcal sore throat",
+    "sore_throat_non_streptococcal": "Sore throat, not streptococcal",
+    "growth_problem": "Growth problem",
+    "confirmed_hiv_infection": "Confirmed HIV infection",
+    "hiv_exposed": "HIV exposed",
+    "suspected_symptomatic_hiv": "Suspected symptomatic HIV",
+    "possible_hiv_infection": "Possible HIV infection",
+    "hiv_infection_unlikely": "HIV infection unlikely",
 }
 
 # Only POSITIVE findings are rendered, following the core verbalizer's rule:
@@ -127,6 +141,131 @@ _FIELD_PHRASES: dict[str, dict[Register, tuple[str, ...]]] = {
         Register.CLINICAL: ("recent travel to malaria area +",),
         Register.SMS: ("travelled to malaria area", "recent malaria area travel"),
     },
+    "wheeze": {
+        Register.NARRATIVE: ("{P} is wheezing", "there is a wheeze when {P} breathes"),
+        Register.CLINICAL: ("wheeze +", "wheezing on auscultation"),
+        Register.SMS: ("wheezing", "wheeze +"),
+    },
+    "diarrhoea": {
+        Register.NARRATIVE: ("{P} has diarrhoea", "{P} has loose stools"),
+        Register.CLINICAL: ("diarrhoea +", "loose stools"),
+        Register.SMS: ("has diarrhoea", "diarrhoea +"),
+    },
+    "blood_in_stool": {
+        Register.NARRATIVE: ("there is blood in {Pp} stool", "{Pp} stool has blood in it"),
+        Register.CLINICAL: ("blood in stool +", "bloody stool"),
+        Register.SMS: ("blood in stool", "bloody stool"),
+    },
+    "dehydration_present": {
+        Register.NARRATIVE: ("{P} shows signs of dehydration",
+                             "{P} has sunken eyes and a slow skin pinch"),
+        Register.CLINICAL: ("dehydration present +", "signs of dehydration"),
+        Register.SMS: ("dehydrated", "signs of dehydration"),
+    },
+    "losing_weight": {
+        Register.NARRATIVE: ("{P} has been losing weight", "{Pp} weight is dropping"),
+        Register.CLINICAL: ("losing weight +", "weight loss on the curve"),
+        Register.SMS: ("losing weight", "wt dropping"),
+    },
+    "low_weight_for_age": {
+        Register.NARRATIVE: ("{P} is underweight for {Pp} age", "{Pp} weight-for-age is low"),
+        Register.CLINICAL: ("low weight-for-age +", "underweight"),
+        Register.SMS: ("low weight for age", "underweight"),
+    },
+    "sore_throat": {
+        Register.NARRATIVE: ("{P} has a sore throat", "{Pp} throat is sore"),
+        Register.CLINICAL: ("sore throat +", "c/o sore throat"),
+        Register.SMS: ("sore throat", "throat sore"),
+    },
+    "enlarged_tonsils": {
+        Register.NARRATIVE: ("{Pp} tonsils are enlarged", "{Pp} tonsils look swollen"),
+        Register.CLINICAL: ("enlarged tonsils +",),
+        Register.SMS: ("big tonsils", "enlarged tonsils"),
+    },
+    "tonsil_exudate": {
+        Register.NARRATIVE: ("there is white pus on {Pp} tonsils",
+                             "{Pp} tonsils have a yellow-white coating"),
+        Register.CLINICAL: ("tonsillar exudate +", "white/yellow exudate on tonsils"),
+        Register.SMS: ("pus on tonsils", "white on tonsils"),
+    },
+    "scarlatiniform_rash": {
+        Register.NARRATIVE: ("{P} has a fine sandpaper-like rash",
+                             "there is a scarlatiniform rash"),
+        Register.CLINICAL: ("scarlatiniform rash +",),
+        Register.SMS: ("sandpaper rash", "scarlatiniform rash"),
+    },
+    "runny_nose": {
+        Register.NARRATIVE: ("{P} has a runny nose",),
+        Register.CLINICAL: ("runny nose +", "coryza"),
+        Register.SMS: ("runny nose",),
+    },
+    "cough": {
+        Register.NARRATIVE: ("{P} has a cough",),
+        Register.CLINICAL: ("cough +",),
+        Register.SMS: ("has cough", "cough +"),
+    },
+    "mother_hiv_positive": {
+        Register.NARRATIVE: ("the mother is HIV-positive", "{Pp} mother has HIV"),
+        Register.CLINICAL: ("mother HIV+ ", "maternal HIV positive"),
+        Register.SMS: ("mother hiv+", "mum is hiv positive"),
+    },
+    "infant_on_arv_prophylaxis": {
+        Register.NARRATIVE: ("{P} is on ARV prophylaxis", "{P} is taking ARV prophylaxis"),
+        Register.CLINICAL: ("on ARV prophylaxis +",),
+        Register.SMS: ("on arv prophylaxis", "taking arvs"),
+    },
+    "breastfeeding_at_or_near_test": {
+        Register.NARRATIVE: ("{P} was breastfeeding around the time of the test",
+                             "{P} is still breastfeeding"),
+        Register.CLINICAL: ("breastfeeding at/near test +",),
+        Register.SMS: ("still breastfeeding", "bf at test time"),
+    },
+    "breastfeeding_stopped_ge_6wk": {
+        Register.NARRATIVE: ("breastfeeding stopped more than 6 weeks before the test",),
+        Register.CLINICAL: ("BF stopped >=6wk before test +",),
+        Register.SMS: ("stopped bf >6wk before test",),
+    },
+    "child_on_art": {
+        Register.NARRATIVE: ("{P} is already on ART",),
+        Register.CLINICAL: ("on ART +",),
+        Register.SMS: ("on art", "taking art"),
+    },
+    "hiv_pneumonia_now": {
+        Register.NARRATIVE: ("{P} has pneumonia now",),
+        Register.CLINICAL: ("pneumonia now +",),
+        Register.SMS: ("has pneumonia now",),
+    },
+    "hiv_persistent_diarrhoea": {
+        Register.NARRATIVE: ("{P} has had persistent diarrhoea",),
+        Register.CLINICAL: ("persistent diarrhoea +",),
+        Register.SMS: ("persistent diarrhoea",),
+    },
+    "hiv_ever_ear_discharge": {
+        Register.NARRATIVE: ("{P} has had ear discharge before",),
+        Register.CLINICAL: ("h/o ear discharge +",),
+        Register.SMS: ("had ear discharge before",),
+    },
+    "hiv_low_weight": {
+        Register.NARRATIVE: ("{P} has a low weight",),
+        Register.CLINICAL: ("low weight +",),
+        Register.SMS: ("low weight",),
+    },
+    "hiv_enlarged_lymph_nodes": {
+        Register.NARRATIVE: ("{P} has enlarged lymph nodes in two or more sites",
+                             "there are enlarged glands in {Pp} neck and groin"),
+        Register.CLINICAL: ("generalised lymphadenopathy +", "enlarged nodes >=2 sites"),
+        Register.SMS: ("enlarged lymph nodes", "swollen glands"),
+    },
+    "hiv_oral_thrush": {
+        Register.NARRATIVE: ("{P} has oral thrush",),
+        Register.CLINICAL: ("oral thrush +",),
+        Register.SMS: ("oral thrush",),
+    },
+    "hiv_parotid_enlargement": {
+        Register.NARRATIVE: ("{Pp} parotid glands are enlarged",),
+        Register.CLINICAL: ("parotid enlargement +",),
+        Register.SMS: ("parotid swelling",),
+    },
 }
 
 
@@ -148,6 +287,9 @@ def _numeric_fragments(a: ExtendedAssessment, register: Register) -> list[str]:
     if a.fever_days is not None and a.fever:
         frags.append(f"fever x{a.fever_days}d" if register is not Register.NARRATIVE
                      else f"the fever has lasted {a.fever_days} days")
+    if a.diarrhoea_days is not None and a.diarrhoea:
+        frags.append(f"diarrhoea x{a.diarrhoea_days}d" if register is not Register.NARRATIVE
+                     else f"the diarrhoea has lasted {a.diarrhoea_days} days")
     if a.appetite_test_passed is False:
         frags.append("appetite test failed" if register is not Register.NARRATIVE
                      else "the child failed the appetite test")
@@ -161,6 +303,12 @@ def _numeric_fragments(a: ExtendedAssessment, register: Register) -> list[str]:
     elif a.malaria_test == TEST_NEGATIVE:
         frags.append("RDT negative" if register is not Register.NARRATIVE
                      else "the malaria test came back negative")
+    if a.hiv_test == TEST_POSITIVE:
+        frags.append("HIV test positive" if register is not Register.NARRATIVE
+                     else "the child's HIV test is positive")
+    elif a.hiv_test == TEST_NEGATIVE:
+        frags.append("HIV test negative" if register is not Register.NARRATIVE
+                     else "the child's HIV test is negative")
     return frags
 
 
@@ -204,14 +352,25 @@ def verbalize_extended(a: ExtendedAssessment, rng: random.Random, style: Vignett
     return _join_opener(opener, sentences, closer)
 
 
-def render_extended_answer(result: TriageResult, rng: random.Random) -> str:
+def render_extended_answer(result: TriageResult, rng: random.Random,
+                           weight_kg: float | None = None, age_months: int | None = None) -> str:
     """Same rigid header + varied body as the core answer, but the extended
-    classifiers' reasoning is already prose, so it renders directly."""
+    classifiers' reasoning is already prose, so it renders directly.
+
+    When weight_kg and age_months are given, a DOSING line is appended with the
+    doses this classification calls for (from the reviewed tables via
+    src/sft/treatment.py); most extended labels carry no in-table drug and so
+    render no DOSING line."""
     label = EXTENDED_LABEL_TEXT[result.condition_label]
     header = (f"CLASSIFICATION: {result.classification.value.upper()} — {label} "
               f"({COLOUR_PHRASE[result.classification]})")
     lines = [header, "", f"WHY: {' '.join(result.reasoning)}",
              f"ACTION: {result.recommended_action}"]
+    if weight_kg is not None and age_months is not None:
+        from src.sft.treatment import render_dosing
+        dosing = render_dosing(result.condition_label, weight_kg, age_months)
+        if dosing:
+            lines.append(f"DOSING: {dosing}")
     if result.secondary_findings:
         lines.append("ALSO: " + " ".join(result.secondary_findings))
     lines += ["", rng.choice(DISCLAIMERS)]

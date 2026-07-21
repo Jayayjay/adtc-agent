@@ -99,6 +99,10 @@ class ChildAssessment:
     fever: bool = False
     fever_days: int | None = None
     stiff_neck: bool = False
+    # 2022 SA adaptation lists a bulging fontanelle alongside stiff neck as a
+    # trigger for the severe fever classification. Additive OR-trigger only --
+    # the label stays the 2014 `very_severe_febrile_disease` the scorer expects.
+    bulging_fontanelle: bool = False
 
     # Ear problem -- SOURCE: WHO IMCI 2014 "Does the child have an ear
     # problem?" panel.
@@ -301,8 +305,13 @@ def assess(child: ChildAssessment) -> TriageResult:
             "model the real IMCI malaria-risk/RDT-dependent algorithm -- "
             "see src/tools/imci_protocol.py module docstring."
         )
-        if child.stiff_neck:
-            reasoning.append("Fever with stiff neck.")
+        if child.stiff_neck or child.bulging_fontanelle:
+            severe_signs = []
+            if child.stiff_neck:
+                severe_signs.append("stiff neck")
+            if child.bulging_fontanelle:
+                severe_signs.append("bulging fontanelle")
+            reasoning.append(f"Fever with {' and '.join(severe_signs)}.")
             return TriageResult(
                 classification=Classification.SEVERE,
                 condition_label="very_severe_febrile_disease",
