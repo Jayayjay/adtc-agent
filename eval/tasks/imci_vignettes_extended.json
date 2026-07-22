@@ -1,0 +1,712 @@
+{
+  "_note": "NL eval for the --include-extended branches (extended sick-child + young-infant). Ground truth is engine-derived: each prompt's structured `input` is run through the deterministic classifier to fill expected_classification + expected_condition_label. UNREVIEWED clinical logic -- this measures the model against the engine, not the engine against a clinician.",
+  "_scorer": "eval/scoring/model_sacc_scorer.py --tasks eval/tasks/imci_vignettes_extended.json --check-label",
+  "examples": [
+    {
+      "id": "ext_wheeze",
+      "prompt": "An 18-month-old is wheezing when she breathes. No danger signs, not fast breathing. How do I classify this?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "wheeze",
+      "expected_label_text": "Wheeze",
+      "group": "extended",
+      "input": {
+        "age_months": 18,
+        "wheeze": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_wheeze_danger",
+      "prompt": "A 2-year-old is wheezing and has become lethargic. What's the classification?",
+      "expected_classification": "severe",
+      "expected_condition_label": "wheeze_with_danger_sign",
+      "expected_label_text": "Wheeze with a general danger sign",
+      "group": "extended",
+      "input": {
+        "age_months": 24,
+        "wheeze": true,
+        "danger_signs_present": [
+          "lethargic_or_unconscious"
+        ]
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_persistent_diarrhoea",
+      "prompt": "A 30-month-old has had loose stools for 18 days now. No sunken eyes, skin pinch normal, not losing weight. Classify?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "persistent_diarrhoea",
+      "expected_label_text": "Persistent diarrhoea",
+      "group": "extended",
+      "input": {
+        "age_months": 30,
+        "diarrhoea": true,
+        "diarrhoea_days": 18
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_severe_persistent_diarrhoea",
+      "prompt": "A 30-month-old has had diarrhoea for 20 days and now shows signs of dehydration. What's the classification?",
+      "expected_classification": "severe",
+      "expected_condition_label": "severe_persistent_diarrhoea",
+      "expected_label_text": "Severe persistent diarrhoea",
+      "group": "extended",
+      "input": {
+        "age_months": 30,
+        "diarrhoea": true,
+        "diarrhoea_days": 20,
+        "dehydration_present": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_dysentery",
+      "prompt": "A 3-year-old has diarrhoea with blood in the stool, no dehydration. How do I classify?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "dysentery",
+      "expected_label_text": "Dysentery",
+      "group": "extended",
+      "input": {
+        "age_months": 36,
+        "diarrhoea": true,
+        "blood_in_stool": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_severe_dysentery",
+      "prompt": "An 8-month-old has diarrhoea with visible blood in the stool. Classification?",
+      "expected_classification": "severe",
+      "expected_condition_label": "severe_dysentery",
+      "expected_label_text": "Severe dysentery",
+      "group": "extended",
+      "input": {
+        "age_months": 8,
+        "diarrhoea": true,
+        "blood_in_stool": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_strep_throat",
+      "prompt": "A 4-year-old has a sore throat with enlarged tonsils and white exudate on them, no cough and no runny nose. Classify?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "streptococcal_sore_throat",
+      "expected_label_text": "Streptococcal sore throat",
+      "group": "extended",
+      "input": {
+        "age_months": 48,
+        "sore_throat": true,
+        "enlarged_tonsils": true,
+        "tonsil_exudate": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_sore_throat_viral",
+      "prompt": "A 4-year-old has a sore throat with a runny nose and a cough. How do I classify?",
+      "expected_classification": "mild",
+      "expected_condition_label": "sore_throat_non_streptococcal",
+      "expected_label_text": "Sore throat, not streptococcal",
+      "group": "extended",
+      "input": {
+        "age_months": 48,
+        "sore_throat": true,
+        "runny_nose": true,
+        "cough": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_growth",
+      "prompt": "A 30-month-old's weight curve shows the child has been losing weight. Classification?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "growth_problem",
+      "expected_label_text": "Growth problem",
+      "group": "extended",
+      "input": {
+        "age_months": 30,
+        "losing_weight": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_malaria",
+      "prompt": "A 3-year-old in a high malaria-risk area has fever, and the rapid malaria test is positive. No danger signs, no stiff neck. Classify?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "malaria",
+      "expected_label_text": "Malaria",
+      "group": "extended",
+      "input": {
+        "age_months": 36,
+        "fever": true,
+        "malaria_risk": "high",
+        "malaria_test": "positive"
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_fever_no_malaria",
+      "prompt": "A 3-year-old has fever and the malaria test came back negative. No danger signs. How do I classify?",
+      "expected_classification": "mild",
+      "expected_condition_label": "fever_no_malaria",
+      "expected_label_text": "Fever, malaria unlikely",
+      "group": "extended",
+      "input": {
+        "age_months": 36,
+        "fever": true,
+        "malaria_test": "negative"
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_very_severe_febrile",
+      "prompt": "A 2-year-old has fever and a stiff neck. What's the classification?",
+      "expected_classification": "severe",
+      "expected_condition_label": "very_severe_febrile_disease",
+      "expected_label_text": "Very severe febrile disease",
+      "group": "extended",
+      "input": {
+        "age_months": 24,
+        "fever": true,
+        "stiff_neck": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_severe_measles",
+      "prompt": "A 2-year-old has a generalised rash with red eyes and cough, and there is clouding of the cornea. Classify?",
+      "expected_classification": "severe",
+      "expected_condition_label": "severe_complicated_measles",
+      "expected_label_text": "Severe complicated measles",
+      "group": "extended",
+      "input": {
+        "age_months": 24,
+        "generalised_rash": true,
+        "cough_or_runny_nose_or_red_eyes": true,
+        "clouding_of_cornea": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_measles",
+      "prompt": "A 2-year-old has a generalised rash with a runny nose and red eyes, no eye or mouth complications. Classification?",
+      "expected_classification": "mild",
+      "expected_condition_label": "measles",
+      "expected_label_text": "Measles",
+      "group": "extended",
+      "input": {
+        "age_months": 24,
+        "generalised_rash": true,
+        "cough_or_runny_nose_or_red_eyes": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_severe_anaemia",
+      "prompt": "A 2-year-old has severe palmar pallor. How do I classify?",
+      "expected_classification": "severe",
+      "expected_condition_label": "severe_anaemia",
+      "expected_label_text": "Severe anaemia",
+      "group": "extended",
+      "input": {
+        "age_months": 24,
+        "severe_palmar_pallor": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_anaemia",
+      "prompt": "A 2-year-old has some palmar pallor. Classification?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "anaemia",
+      "expected_label_text": "Anaemia",
+      "group": "extended",
+      "input": {
+        "age_months": 24,
+        "some_palmar_pallor": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_complicated_sam",
+      "prompt": "A 2-year-old has oedema of both feet. What's the classification?",
+      "expected_classification": "severe",
+      "expected_condition_label": "complicated_severe_acute_malnutrition",
+      "expected_label_text": "Complicated severe acute malnutrition",
+      "group": "extended",
+      "input": {
+        "age_months": 24,
+        "oedema_of_both_feet": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_moderate_malnutrition",
+      "prompt": "A 2-year-old has a MUAC of 120 mm, no oedema. How do I classify?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "moderate_acute_malnutrition",
+      "expected_label_text": "Moderate acute malnutrition",
+      "group": "extended",
+      "input": {
+        "age_months": 24,
+        "muac_mm": 120
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_hiv_confirmed",
+      "prompt": "A 2-year-old has a positive HIV test. How do I classify the HIV status?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "confirmed_hiv_infection",
+      "expected_label_text": "Confirmed HIV infection",
+      "group": "extended",
+      "input": {
+        "age_months": 24,
+        "hiv_test": "positive"
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_hiv_exposed",
+      "prompt": "A 6-month-old is on ARV prophylaxis. What is the HIV classification?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "hiv_exposed",
+      "expected_label_text": "HIV exposed",
+      "group": "extended",
+      "input": {
+        "age_months": 6,
+        "infant_on_arv_prophylaxis": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_hiv_suspected",
+      "prompt": "A 30-month-old has oral thrush, a low weight, and pneumonia now. How do I classify for HIV?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "suspected_symptomatic_hiv",
+      "expected_label_text": "Suspected symptomatic HIV",
+      "group": "extended",
+      "input": {
+        "age_months": 30,
+        "hiv_oral_thrush": true,
+        "hiv_low_weight": true,
+        "hiv_pneumonia_now": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_hiv_possible",
+      "prompt": "A 2-year-old's mother is HIV-positive, and the child has no features of HIV. How do I classify?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "possible_hiv_infection",
+      "expected_label_text": "Possible HIV infection",
+      "group": "extended",
+      "input": {
+        "age_months": 24,
+        "mother_hiv_positive": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "ext_hiv_unlikely",
+      "prompt": "A 2-year-old has a negative HIV test and stopped breastfeeding more than 6 weeks before the test, with no features of HIV. Classify?",
+      "expected_classification": "mild",
+      "expected_condition_label": "hiv_infection_unlikely",
+      "expected_label_text": "HIV infection unlikely",
+      "group": "extended",
+      "input": {
+        "age_months": 24,
+        "hiv_test": "negative",
+        "breastfeeding_stopped_ge_6wk": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "yi_very_severe",
+      "prompt": "A 20-day-old baby has a bulging fontanelle. How do I classify this young infant?",
+      "expected_classification": "severe",
+      "expected_condition_label": "yi_very_severe_disease",
+      "expected_label_text": "Very severe disease (young infant)",
+      "group": "young_infant",
+      "input": {
+        "age_days": 20,
+        "bulging_fontanelle": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "yi_local_infection",
+      "prompt": "A 20-day-old baby has a red umbilicus, no danger signs. Classification?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "yi_local_bacterial_infection",
+      "expected_label_text": "Local bacterial infection",
+      "group": "young_infant",
+      "input": {
+        "age_days": 20,
+        "umbilicus_red_only": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "yi_severe_jaundice",
+      "prompt": "A baby less than a day old is already jaundiced. What's the classification?",
+      "expected_classification": "severe",
+      "expected_condition_label": "yi_severe_jaundice",
+      "expected_label_text": "Severe jaundice",
+      "group": "young_infant",
+      "input": {
+        "age_days": 0,
+        "jaundice": true,
+        "jaundice_onset_under_24h": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "yi_jaundice",
+      "prompt": "A 5-day-old baby has jaundice that appeared after the first day; palms and soles are not yellow. Classify?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "yi_jaundice",
+      "expected_label_text": "Jaundice",
+      "group": "young_infant",
+      "input": {
+        "age_days": 5,
+        "jaundice": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "yi_severe_dehydration",
+      "prompt": "A 20-day-old baby has watery diarrhoea. How do I classify this young infant's dehydration?",
+      "expected_classification": "severe",
+      "expected_condition_label": "yi_severe_dehydration",
+      "expected_label_text": "Severe dehydration (young infant)",
+      "group": "young_infant",
+      "input": {
+        "age_days": 20,
+        "diarrhoea": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "yi_some_dehydration",
+      "prompt": "A 6-week-old baby has diarrhoea, is restless and irritable, and the skin pinch goes back slowly. Classify?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "yi_some_dehydration",
+      "expected_label_text": "Some dehydration (young infant)",
+      "group": "young_infant",
+      "input": {
+        "age_days": 45,
+        "diarrhoea": true,
+        "restless_or_irritable": true,
+        "skin_pinch_slow": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "yi_no_dehydration",
+      "prompt": "A 6-week-old baby has diarrhoea but no sunken eyes, normal skin pinch, and is feeding. Classification?",
+      "expected_classification": "mild",
+      "expected_condition_label": "yi_no_dehydration",
+      "expected_label_text": "Diarrhoea with no dehydration (young infant)",
+      "group": "young_infant",
+      "input": {
+        "age_days": 45,
+        "diarrhoea": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "yi_dysentery",
+      "prompt": "A 1-month-old baby has diarrhoea with blood in the stool. How do I classify?",
+      "expected_classification": "severe",
+      "expected_condition_label": "yi_dysentery",
+      "expected_label_text": "Dysentery (young infant)",
+      "group": "young_infant",
+      "input": {
+        "age_days": 30,
+        "diarrhoea": true,
+        "blood_in_stool": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "yi_congenital_priority",
+      "prompt": "A 2-day-old baby has a cleft lip and palate. What's the classification?",
+      "expected_classification": "severe",
+      "expected_condition_label": "yi_congenital_priority",
+      "expected_label_text": "Congenital priority sign",
+      "group": "young_infant",
+      "input": {
+        "age_days": 2,
+        "cleft_lip_or_palate": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "yi_congenital_abnormal",
+      "prompt": "A 2-day-old baby has a club foot, no priority signs. Classification?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "yi_congenital_abnormal_signs",
+      "expected_label_text": "Congenital abnormal sign",
+      "group": "young_infant",
+      "input": {
+        "age_days": 2,
+        "club_foot": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    },
+    {
+      "id": "yi_congenital_syphilis",
+      "prompt": "A 2-day-old baby whose mother had a positive RPR that was never treated. How do I classify?",
+      "expected_classification": "moderate",
+      "expected_condition_label": "yi_possible_congenital_syphilis",
+      "expected_label_text": "Possible congenital syphilis",
+      "group": "young_infant",
+      "input": {
+        "age_days": 2,
+        "mother_rpr_positive_untreated": true
+      },
+      "must_not_mention": [
+        "ICD-10",
+        "imci_protocol",
+        "scaffold",
+        ".py",
+        "ExtendedAssessment",
+        "YoungInfantAssessment"
+      ]
+    }
+  ]
+}

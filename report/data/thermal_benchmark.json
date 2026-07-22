@@ -1,9 +1,9 @@
 {
   "model": "models/Qwen3.5-0.8B-IMCI-Q4_K_M.gguf",
   "duration_s": 300,
-  "peak_temp_c": 81.0,
-  "early_tps_avg": 24.758198264679912,
-  "late_tps_avg": 24.15990955779434,
+  "peak_temp_c": 79.0,
+  "early_tps_avg": 25.297231328363992,
+  "late_tps_avg": 24.33960610723773,
   "throttled": false,
   "thermal_penalty": 0.0
 }

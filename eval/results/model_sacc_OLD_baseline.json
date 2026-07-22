@@ -98,17 +98,17 @@
       "mode": "chat",
       "temperature": 0.0,
       "samples_per_case": 1,
-      "accuracy": 100.0,
-      "format_compliance": 100.0,
-      "undertriage_rate": 0.0,
+      "accuracy": 80.0,
+      "format_compliance": 90.0,
+      "undertriage_rate": 10.0,
       "overtriage_rate": 0.0,
       "per_case": [
         {
           "id": "nl_001",
           "expected": "moderate",
-          "predicted": "moderate",
+          "predicted": "mild",
           "all_samples": [
-            "moderate"
+            "mild"
           ]
         },
         {
@@ -122,9 +122,9 @@
         {
           "id": "nl_003",
           "expected": "severe",
-          "predicted": "severe",
+          "predicted": null,
           "all_samples": [
-            "severe"
+            null
           ]
         },
         {
@@ -323,16 +323,16 @@
       "temperature": 0.0,
       "samples_per_case": 1,
       "accuracy": 60.0,
-      "format_compliance": 60.0,
-      "undertriage_rate": 0.0,
+      "format_compliance": 70.0,
+      "undertriage_rate": 10.0,
       "overtriage_rate": 0.0,
       "per_case": [
         {
           "id": "nl_001",
           "expected": "moderate",
-          "predicted": null,
+          "predicted": "mild",
           "all_samples": [
-            null
+            "mild"
           ]
         },
         {
@@ -354,17 +354,17 @@
         {
           "id": "nl_004",
           "expected": "severe",
-          "predicted": null,
+          "predicted": "severe",
           "all_samples": [
-            null
+            "severe"
           ]
         },
         {
           "id": "nl_005",
           "expected": "moderate",
-          "predicted": "moderate",
+          "predicted": null,
           "all_samples": [
-            "moderate"
+            null
           ]
         },
         {
@@ -394,17 +394,17 @@
         {
           "id": "nl_009",
           "expected": "severe",
-          "predicted": "severe",
+          "predicted": null,
           "all_samples": [
-            "severe"
+            null
           ]
         },
         {
           "id": "nl_010",
           "expected": "moderate",
-          "predicted": null,
+          "predicted": "moderate",
           "all_samples": [
-            null
+            "moderate"
           ]
         }
       ]

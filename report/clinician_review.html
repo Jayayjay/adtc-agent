@@ -1,0 +1,261 @@
+<style>
+:root{
+  --bg:#f7f9fb; --panel:#ffffff; --ink:#16232b; --muted:#5b6b74; --line:#dde5ea;
+  --accent:#0e7490; --accent-ink:#0b5566;
+  --refer:#c2255c; --refer-bg:#fdeef3; --treat:#b45309; --treat-bg:#fbf1e4; --home:#2f8f4e; --home-bg:#ecf7ef;
+  --warn:#b4530a; --warn-bg:#fbeee1;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1417; --panel:#161d22; --ink:#e6edf1; --muted:#93a2ab; --line:#26313a;
+  --accent:#3bb3c9; --accent-ink:#7fd3e2;
+  --refer:#f06595; --refer-bg:#2a1620; --treat:#e0902f; --treat-bg:#271c10; --home:#5fc57e; --home-bg:#12241a;
+  --warn:#e0902f; --warn-bg:#271c10;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f1417; --panel:#161d22; --ink:#e6edf1; --muted:#93a2ab; --line:#26313a;
+  --accent:#3bb3c9; --accent-ink:#7fd3e2;
+  --refer:#f06595; --refer-bg:#2a1620; --treat:#e0902f; --treat-bg:#271c10; --home:#5fc57e; --home-bg:#12241a;
+  --warn:#e0902f; --warn-bg:#271c10;
+}
+:root[data-theme="light"]{
+  --bg:#f7f9fb; --panel:#ffffff; --ink:#16232b; --muted:#5b6b74; --line:#dde5ea;
+  --accent:#0e7490; --accent-ink:#0b5566;
+  --refer:#c2255c; --refer-bg:#fdeef3; --treat:#b45309; --treat-bg:#fbf1e4; --home:#2f8f4e; --home-bg:#ecf7ef;
+  --warn:#b4530a; --warn-bg:#fbeee1;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;
+  font-size:15px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding:40px 24px 80px}
+header.top{border-bottom:2px solid var(--accent);padding-bottom:20px;margin-bottom:8px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink);font-weight:700}
+h1{font-size:30px;line-height:1.15;margin:.3em 0 .2em;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:20px;margin:44px 0 12px;padding-top:14px;border-top:1px solid var(--line);letter-spacing:-.01em}
+h3{font-size:15px;margin:22px 0 6px;font-family:var(--mono);color:var(--accent-ink)}
+p{color:var(--muted);max-width:68ch}
+.banner{display:flex;gap:12px;align-items:flex-start;background:var(--warn-bg);border:1px solid var(--warn);
+  border-radius:10px;padding:14px 16px;margin:18px 0;color:var(--ink)}
+.banner b{color:var(--warn)}
+.meta{font-size:13px;color:var(--muted);margin:6px 0}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin:10px 0 6px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
+  font-weight:700;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--panel);position:sticky;top:0}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.num,th.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+code{font-family:var(--mono);font-size:12.5px;background:var(--refer-bg);background:color-mix(in srgb,var(--line) 45%,transparent);
+  padding:1px 5px;border-radius:5px}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.pill.refer{color:var(--refer);background:var(--refer-bg);border:1px solid var(--refer)}
+.pill.treat{color:var(--treat);background:var(--treat-bg);border:1px solid var(--treat)}
+.pill.home{color:var(--home);background:var(--home-bg);border:1px solid var(--home)}
+td.tier{border-left:4px solid var(--line)}
+tr.refer td.tier{border-left-color:var(--refer)} tr.treat td.tier{border-left-color:var(--treat)} tr.home td.tier{border-left-color:var(--home)}
+.chk{width:18px;height:18px;border:1.5px solid var(--muted);border-radius:4px;display:inline-block}
+.corr{min-width:120px;color:var(--muted)}
+ul.check{list-style:none;padding:0;margin:10px 0}
+ul.check li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line);max-width:80ch}
+.signoff{margin-top:40px;border:1px solid var(--accent);border-radius:12px;padding:20px 22px;background:var(--panel)}
+.signoff .row{display:flex;flex-wrap:wrap;gap:28px;margin-top:14px}
+.signoff .field{flex:1;min-width:180px;border-bottom:1.5px solid var(--muted);padding-bottom:4px;font-size:12px;color:var(--muted)}
+@media print{
+  body{background:#fff;color:#000;font-size:11px}
+  .wrap{max-width:none;padding:0}
+  .tablewrap,.signoff,.banner{border-color:#999}
+  h2{break-before:auto} tr{break-inside:avoid}
+  th{position:static}
+}
+</style>
+<div class="wrap">
+<header class="top">
+<div class="eyebrow">IMCI · clinical sign-off</div>
+<h1>Extended &amp; young-infant branches — clinician review</h1>
+<div class="banner"><span>⚠️</span><div><b>UNREVIEWED.</b> These classifications and dose bands train a model only with <code>--include-extended</code> (off by default). Nothing ships until signed off against the current national IMCI adaptation. Every row here is generated from the code, so it matches exactly what the model was trained to say.</div></div>
+<p class="meta">Sources: <code>data/imci_2022/classifications.json</code> (2022 SA adaptation, cross-checked vs the WHO 2014 generic) · doses in <code>data/imci_2022/dosing_tables.json</code>. Severity uses the IMCI colour tiers.</p>
+<p class="meta">To review: confirm each <b>trigger</b> and <b>severity</b> against the national chart, tick <b>OK?</b> or write a correction, then sign the block at the end.</p>
+</header>
+<h2>Classifications — severity, trigger &amp; action (as implemented)</h2>
+<h3>Fever / malaria</h3>
+<div class="tablewrap"><table><thead><tr><th>Classification</th><th>Severity</th><th>Trigger (as coded)</th><th>Action</th><th>Drugs</th><th>OK?</th><th>Correction</th></tr></thead><tbody>
+<tr class="refer"><td class="tier"><code>very_severe_febrile_disease</code></td><td><span class="pill refer">PINK · refer urgently</span></td><td>Fever with a general danger sign or a stiff neck classifies as very severe febrile disease, whatever the malaria test shows.</td><td>Give the first dose of an appropriate antibiotic. Treat the child to prevent low blood sugar. Give paracetamol for high fever. Refer URGENTLY to hospital.</td><td>ceftriaxone_im, paracetamol</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>malaria</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>The malaria test is positive and there are no danger signs or stiff neck.</td><td>Give a first-line oral antimalarial as the national guideline directs. Give paracetamol for high fever. Advise the mother when to return immediately. Follow up in 3 days if the fever persists.</td><td>artemether_lumefantrine, paracetamol</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="home"><td class="tier"><code>fever_no_malaria</code></td><td><span class="pill home">GREEN · home care</span></td><td>The malaria test is negative, so this fever is not malaria.</td><td>Look for and treat another cause of fever. Give paracetamol for high fever. Advise the mother when to return immediately. Follow up in 3 days if the fever persists.</td><td>paracetamol</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>fever_malaria_test_required</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>This child has fever in a malaria risk area, or has travelled to one, and no malaria test has been done. The chart booklet requires a malaria test before the fever can be classified.</td><td>Do a malaria test (RDT or microscopy) now and classify on the result. Give paracetamol for high fever meanwhile, and refer urgently if any danger sign appears.</td><td>paracetamol</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+</tbody></table></div>
+<h3>Measles</h3>
+<div class="tablewrap"><table><thead><tr><th>Classification</th><th>Severity</th><th>Trigger (as coded)</th><th>Action</th><th>Drugs</th><th>OK?</th><th>Correction</th></tr></thead><tbody>
+<tr class="refer"><td class="tier"><code>severe_complicated_measles</code></td><td><span class="pill refer">PINK · refer urgently</span></td><td>A generalised rash with cough, runny nose, or red eyes meets the measles case definition. There is clouding of the cornea, which makes this severe complicated measles.</td><td>Give vitamin A. Give the first dose of an appropriate antibiotic. If there is clouding of the cornea or pus draining from the eye, apply tetracycline eye ointment. Refer URGENTLY to hospital.</td><td>vitamin_a</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>measles_with_eye_or_mouth_complications</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>A generalised rash with cough, runny nose, or red eyes meets the measles case definition. There is pus draining from the eye.</td><td>Give vitamin A. If there is pus draining from the eye, apply tetracycline eye ointment. If there are mouth ulcers, treat with gentian violet. Follow up in 3 days.</td><td>vitamin_a</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="home"><td class="tier"><code>measles</code></td><td><span class="pill home">GREEN · home care</span></td><td>A generalised rash with cough, runny nose, or red eyes meets the measles case definition. There are no eye or mouth complications and no danger signs.</td><td>Give vitamin A. Advise the mother when to return immediately.</td><td>vitamin_a</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+</tbody></table></div>
+<h3>Anaemia</h3>
+<div class="tablewrap"><table><thead><tr><th>Classification</th><th>Severity</th><th>Trigger (as coded)</th><th>Action</th><th>Drugs</th><th>OK?</th><th>Correction</th></tr></thead><tbody>
+<tr class="refer"><td class="tier"><code>severe_anaemia</code></td><td><span class="pill refer">PINK · refer urgently</span></td><td>There is severe palmar pallor.</td><td>Refer URGENTLY to hospital.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>anaemia</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>There is some palmar pallor.</td><td>Give iron. Give mebendazole if the child is 1 year or older and has not had a dose in the last 6 months. Advise the mother when to return immediately. Follow up in 14 days.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="home"><td class="tier"><code>no_anaemia</code></td><td><span class="pill home">GREEN · home care</span></td><td>There is no palmar pallor.</td><td>No treatment for anaemia is needed.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+</tbody></table></div>
+<h3>Acute malnutrition</h3>
+<div class="tablewrap"><table><thead><tr><th>Classification</th><th>Severity</th><th>Trigger (as coded)</th><th>Action</th><th>Drugs</th><th>OK?</th><th>Correction</th></tr></thead><tbody>
+<tr class="refer"><td class="tier"><code>complicated_severe_acute_malnutrition</code></td><td><span class="pill refer">PINK · refer urgently</span></td><td>There is oedema of both feet, which is always severe acute malnutrition. With oedema of both feet, this is complicated severe acute malnutrition.</td><td>Give the first dose of an appropriate antibiotic. Treat the child to prevent low blood sugar. Keep the child warm. Refer URGENTLY to hospital.</td><td>vitamin_a</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>uncomplicated_severe_acute_malnutrition</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>MUAC is 110mm, below 115mm. The appetite test passed and there is no medical complication.</td><td>Give ready-to-use therapeutic food (RUTF) for the child to take at home. Assess and counsel on feeding. Advise the mother when to return immediately. Follow up in 7 days.</td><td>amoxicillin, vitamin_a</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>moderate_acute_malnutrition</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>MUAC is 120mm, between 115mm and 125mm.</td><td>Assess and counsel on feeding. Advise the mother when to return immediately. Follow up in 30 days.</td><td>vitamin_a</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="home"><td class="tier"><code>no_acute_malnutrition</code></td><td><span class="pill home">GREEN · home care</span></td><td>There is no oedema of both feet and no wasting by MUAC or weight-for-height.</td><td>If the child is less than 2 years old, assess and counsel on feeding. No treatment for acute malnutrition is needed.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+</tbody></table></div>
+<h3>Wheeze (cough sub-branch)</h3>
+<div class="tablewrap"><table><thead><tr><th>Classification</th><th>Severity</th><th>Trigger (as coded)</th><th>Action</th><th>Drugs</th><th>OK?</th><th>Correction</th></tr></thead><tbody>
+<tr class="refer"><td class="tier"><code>wheeze_with_danger_sign</code></td><td><span class="pill refer">PINK · refer urgently</span></td><td>The child has wheeze. There is a general danger sign, so give salbutamol and refer urgently.</td><td>Give salbutamol by spacer. Give the first dose of an appropriate antibiotic and refer URGENTLY to hospital.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>wheeze</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>The child has wheeze.</td><td>Give salbutamol by spacer for 5 days. Follow up in 5 days if the child is still wheezing. If a cough lasts more than 14 days or the wheeze is recurrent, assess for TB or asthma.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+</tbody></table></div>
+<h3>Persistent diarrhoea (&gt;=14 days)</h3>
+<div class="tablewrap"><table><thead><tr><th>Classification</th><th>Severity</th><th>Trigger (as coded)</th><th>Action</th><th>Drugs</th><th>OK?</th><th>Correction</th></tr></thead><tbody>
+<tr class="refer"><td class="tier"><code>severe_persistent_diarrhoea</code></td><td><span class="pill refer">PINK · refer urgently</span></td><td>Diarrhoea has lasted 14 days or more and dehydration is present.</td><td>Treat dehydration before referral unless the child has another severe classification. Give an extra dose of vitamin A. Refer URGENTLY to hospital.</td><td>vitamin_a</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>persistent_diarrhoea</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>Diarrhoea has lasted 14 days or more with no visible dehydration.</td><td>Counsel the caregiver on feeding for persistent diarrhoea. Give an extra dose of vitamin A and give zinc for 14 days. Follow up in 5 days.</td><td>zinc, vitamin_a</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+</tbody></table></div>
+<h3>Dysentery (blood in stool)</h3>
+<div class="tablewrap"><table><thead><tr><th>Classification</th><th>Severity</th><th>Trigger (as coded)</th><th>Action</th><th>Drugs</th><th>OK?</th><th>Correction</th></tr></thead><tbody>
+<tr class="refer"><td class="tier"><code>severe_dysentery</code></td><td><span class="pill refer">PINK · refer urgently</span></td><td>There is blood in the stool and the child is less than 12 months old.</td><td>Treat the child to prevent low blood sugar, keep the child warm, and refer URGENTLY to hospital.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>dysentery</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>There is blood in the stool, the child is 12 months or older, and there is no dehydration.</td><td>Treat for 3 days with ciprofloxacin. Advise the mother when to return immediately. Follow up in 2 days.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+</tbody></table></div>
+<h3>Sore throat (from 3 years)</h3>
+<div class="tablewrap"><table><thead><tr><th>Classification</th><th>Severity</th><th>Trigger (as coded)</th><th>Action</th><th>Drugs</th><th>OK?</th><th>Correction</th></tr></thead><tbody>
+<tr class="treat"><td class="tier"><code>streptococcal_sore_throat</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>There is enlarged tonsils, white or yellow exudate on the tonsils, with no runny nose and no cough, which points to a streptococcal sore throat.</td><td>Give penicillin. Treat pain and fever. Soothe the throat with a safe remedy. Follow up in 5 days if symptoms are worse or not resolving.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="home"><td class="tier"><code>sore_throat_non_streptococcal</code></td><td><span class="pill home">GREEN · home care</span></td><td>There are not enough signs to classify this as a streptococcal sore throat.</td><td>Soothe the throat with a safe remedy.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+</tbody></table></div>
+<h3>Growth problem (RTHB curve)</h3>
+<div class="tablewrap"><table><thead><tr><th>Classification</th><th>Severity</th><th>Trigger (as coded)</th><th>Action</th><th>Drugs</th><th>OK?</th><th>Correction</th></tr></thead><tbody>
+<tr class="treat"><td class="tier"><code>growth_problem</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>On the weight curve, the child is losing weight.</td><td>Assess feeding and counsel the caregiver on the feeding recommendations. Deworm and give vitamin A if due. Advise the mother when to return immediately. Follow up in 7 days if there is a feeding problem, otherwise in 14 days.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+</tbody></table></div>
+<h3>HIV</h3>
+<div class="tablewrap"><table><thead><tr><th>Classification</th><th>Severity</th><th>Trigger (as coded)</th><th>Action</th><th>Drugs</th><th>OK?</th><th>Correction</th></tr></thead><tbody>
+<tr class="treat"><td class="tier"><code>confirmed_hiv_infection</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>The child has a positive HIV test or is already on ART, so HIV infection is confirmed.</td><td>Follow the steps to initiate ART. Give cotrimoxazole prophylaxis from 6 weeks of age. Ask about the caregiver's health and manage appropriately. Provide long-term follow-up. ART initiation is not urgent -- stabilise any severe illness first.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>hiv_exposed</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>The child is HIV-exposed: on ARV prophylaxis, or with a negative test while still breastfeeding or within 6 weeks of breastfeeding, so infection is not yet ruled out.</td><td>Complete the appropriate infant ARV prophylaxis. Repeat HIV PCR testing per the schedule and reclassify on the result. Ask about the caregiver's health and provide follow-up care.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>suspected_symptomatic_hiv</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>There are 3 features of HIV infection (three or more), so symptomatic HIV is suspected.</td><td>Counsel and offer HIV testing for the child and reclassify on the result. Counsel the caregiver about her own health and offer testing. Provide long-term follow-up.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>possible_hiv_infection</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>HIV infection is possible because the mother is HIV-positive.</td><td>Provide routine care including HIV testing for the child. Counsel the caregiver about her health and offer testing and treatment as needed. Reclassify on the test result.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="home"><td class="tier"><code>hiv_infection_unlikely</code></td><td><span class="pill home">GREEN · home care</span></td><td>The HIV test is negative, all breastfeeding stopped 6 weeks or more before the test, and there are no features of HIV infection.</td><td>Provide routine care. Repeat HIV testing only if new features appear or exposure is ongoing.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+</tbody></table></div>
+<h3>Young infant: bacterial infection</h3>
+<div class="tablewrap"><table><thead><tr><th>Classification</th><th>Severity</th><th>Trigger (as coded)</th><th>Action</th><th>Drugs</th><th>OK?</th><th>Correction</th></tr></thead><tbody>
+<tr class="refer"><td class="tier"><code>yi_very_severe_disease</code></td><td><span class="pill refer">PINK · refer urgently</span></td><td>The young infant has a bulging fontanelle, which is very severe disease.</td><td>Give the first dose of an appropriate intramuscular antibiotic. Treat to prevent low blood sugar. Keep the infant warm on the way to hospital. Refer URGENTLY.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>yi_local_bacterial_infection</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>The young infant has a red umbilicus, a local bacterial infection.</td><td>Give an appropriate oral antibiotic. If there is eye discharge, give an eye ointment. Teach the caregiver to treat the local infection at home and to give home care. Follow up in 2 days.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="home"><td class="tier"><code>yi_no_bacterial_infection</code></td><td><span class="pill home">GREEN · home care</span></td><td>No signs of very severe disease or a local bacterial infection.</td><td>Counsel the caregiver on home care for the young infant.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+</tbody></table></div>
+<h3>Young infant: jaundice</h3>
+<div class="tablewrap"><table><thead><tr><th>Classification</th><th>Severity</th><th>Trigger (as coded)</th><th>Action</th><th>Drugs</th><th>OK?</th><th>Correction</th></tr></thead><tbody>
+<tr class="refer"><td class="tier"><code>yi_severe_jaundice</code></td><td><span class="pill refer">PINK · refer urgently</span></td><td>There is jaundice under 24 hours of age, which is severe jaundice.</td><td>Treat to prevent low blood sugar. Keep the infant warm. Refer URGENTLY to hospital.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>yi_jaundice</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>There is jaundice appearing after 24 hours of age, with palms and soles not yellow.</td><td>Advise the caregiver to return immediately if the palms and soles become yellow. Follow up in 1 day. If the infant is older than 14 days, refer for assessment.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+</tbody></table></div>
+<h3>Young infant: diarrhoea</h3>
+<div class="tablewrap"><table><thead><tr><th>Classification</th><th>Severity</th><th>Trigger (as coded)</th><th>Action</th><th>Drugs</th><th>OK?</th><th>Correction</th></tr></thead><tbody>
+<tr class="refer"><td class="tier"><code>yi_severe_dehydration</code></td><td><span class="pill refer">PINK · refer urgently</span></td><td>There is diarrhoea with the infant is less than 1 month old, which is severe dehydration in a young infant.</td><td>Start intravenous fluids (Plan C). Give the first dose of an intramuscular antibiotic. Keep the infant warm on the way to hospital. Refer URGENTLY.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="refer"><td class="tier"><code>yi_dysentery</code></td><td><span class="pill refer">PINK · refer urgently</span></td><td>There is blood in the stool of a young infant.</td><td>Keep the infant warm on the way to hospital. Refer URGENTLY.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="refer"><td class="tier"><code>yi_severe_persistent_diarrhoea</code></td><td><span class="pill refer">PINK · refer urgently</span></td><td>Diarrhoea has lasted 14 days or more in a young infant.</td><td>Treat any dehydration before referral. Keep the infant warm. Refer URGENTLY.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>yi_some_dehydration</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>There is diarrhoea with two of restless/irritable, sunken eyes, and a slow skin pinch, which is some dehydration.</td><td>Give fluid for some dehydration (Plan B). Advise the mother to continue breastfeeding. Give zinc for 14 days. Follow up in 2 days.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="home"><td class="tier"><code>yi_no_dehydration</code></td><td><span class="pill home">GREEN · home care</span></td><td>There is diarrhoea with not enough signs for some or severe dehydration.</td><td>Give fluid and continue breastfeeding at home (Plan A). Give zinc for 14 days. Counsel the caregiver on home care. Follow up in 2 days.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+</tbody></table></div>
+<h3>Young infant: congenital problems</h3>
+<div class="tablewrap"><table><thead><tr><th>Classification</th><th>Severity</th><th>Trigger (as coded)</th><th>Action</th><th>Drugs</th><th>OK?</th><th>Correction</th></tr></thead><tbody>
+<tr class="refer"><td class="tier"><code>yi_congenital_priority</code></td><td><span class="pill refer">PINK · refer urgently</span></td><td>There is a cleft lip or palate, a congenital priority sign.</td><td>Give any needed pre-referral treatment. Treat to prevent low blood sugar. Keep the infant warm. Refer URGENTLY to hospital.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>yi_congenital_abnormal_signs</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>There is a club foot, an abnormal sign.</td><td>Keep the infant warm, skin to skin. Assess breastfeeding and support the mother. Refer for assessment.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+<tr class="treat"><td class="tier"><code>yi_possible_congenital_syphilis</code></td><td><span class="pill treat">YELLOW · treat + follow up</span></td><td>The mother's RPR is positive and she was untreated or only partially treated, so congenital syphilis is possible.</td><td>Check for signs of congenital syphilis and refer to hospital if present. If there are no signs, give intramuscular penicillin. Ensure the mother receives full treatment.</td><td>—</td><td><span class="chk"></span></td><td class="corr"></td></tr>
+</tbody></table></div>
+<h2>Dosing tables — confirm every band</h2>
+<p class="meta">Doses are not graded by the model scorer; they are emitted verbatim from these tables.</p>
+<h3>amoxicillin</h3>
+<p class="meta">pneumonia, acute ear infection · oral · two times daily for 5 days · source 2014 p16 · keyed by weight</p>
+<div class="tablewrap"><table><thead><tr><th>weight (kg)</th><th class="num">tablet_250mg</th><th class="num">syrup_250mg_per_5ml_ml</th><th>OK?</th></tr></thead><tbody>
+<tr><td class="num">4–10</td><td class="num">1</td><td class="num">5</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">10–14</td><td class="num">2</td><td class="num">10</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">14–19</td><td class="num">3</td><td class="num">15</td><td><span class="chk"></span></td></tr>
+</tbody></table></div>
+<h3>cotrimoxazole_prophylaxis</h3>
+<p class="meta">prophylaxis in HIV confirmed or exposed child · oral · once a day, starting at 4-6 weeks of age · source 2014 p16 · keyed by age</p>
+<div class="tablewrap"><table><thead><tr><th>age (months)</th><th class="num">syrup_40_200_per_5ml_ml</th><th class="num">paed_tablet_20_100</th><th class="num">adult_tablet_80_400</th><th>OK?</th></tr></thead><tbody>
+<tr><td class="num">0–6</td><td class="num">2.5</td><td class="num">0.5</td><td class="num">0.25</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">6–60</td><td class="num">5</td><td class="num">2</td><td class="num">0.5</td><td><span class="chk"></span></td></tr>
+</tbody></table></div>
+<h3>paracetamol</h3>
+<p class="meta">high fever (&gt;38.5C) or ear pain · oral · every 6 hours until fever or pain is gone · source 2014 p16 · keyed by weight</p>
+<div class="tablewrap"><table><thead><tr><th>weight (kg)</th><th class="num">tablet_100mg</th><th class="num">tablet_500mg</th><th>OK?</th></tr></thead><tbody>
+<tr><td class="num">4–14</td><td class="num">1</td><td class="num">0.25</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">14–19</td><td class="num">1.5</td><td class="num">0.5</td><td><span class="chk"></span></td></tr>
+</tbody></table></div>
+<h3>zinc</h3>
+<p class="meta">diarrhoea (age 2 months up to 5 years) · oral · daily for 14 days · source 2014 (GIVE EXTRA FLUID FOR DIARRHOEA) · keyed by age</p>
+<div class="tablewrap"><table><thead><tr><th>age (months)</th><th class="num">tablets_daily</th><th>OK?</th></tr></thead><tbody>
+<tr><td class="num">2–6</td><td class="num">0.5</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">6–&#8734;</td><td class="num">1</td><td><span class="chk"></span></td></tr>
+</tbody></table></div>
+<h3>ors_plan_a_extra_fluid</h3>
+<p class="meta">diarrhoea, no dehydration -- amount after each loose stool · oral ·  · source 2014 Plan A · keyed by age</p>
+<div class="tablewrap"><table><thead><tr><th>age (months)</th><th class="num">ml_after_each_loose_stool_min</th><th class="num">ml_after_each_loose_stool_max</th><th>OK?</th></tr></thead><tbody>
+<tr><td class="num">0–24</td><td class="num">50</td><td class="num">100</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">24–&#8734;</td><td class="num">100</td><td class="num">200</td><td><span class="chk"></span></td></tr>
+</tbody></table></div>
+<h3>vitamin_a</h3>
+<p class="meta">supplementation from 6 months; treatment dose for measles or persistent diarrhoea (NOT if dosed in past month or on RUTF) · oral ·  · source 2014 (Vitamin A supplementation and treatment) · keyed by age</p>
+<div class="tablewrap"><table><thead><tr><th>age (months)</th><th class="num">iu</th><th>OK?</th></tr></thead><tbody>
+<tr><td class="num">6–12</td><td class="num">100000</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">12–&#8734;</td><td class="num">200000</td><td><span class="chk"></span></td></tr>
+</tbody></table></div>
+<h3>mebendazole</h3>
+<p class="meta">deworming if hookworm/whipworm endemic, child &gt;=1 year, no dose in previous 6 months · oral · single dose in clinic · source 2014 · keyed by age</p>
+<div class="tablewrap"><table><thead><tr><th>age (months)</th><th class="num">dose_mg</th><th>OK?</th></tr></thead><tbody>
+<tr><td class="num">12–&#8734;</td><td class="num">500</td><td><span class="chk"></span></td></tr>
+</tbody></table></div>
+<h3>ceftriaxone_im</h3>
+<p class="meta">sick-child pre-referral (very severe disease, suspected meningitis, severe pneumonia, mastoiditis) · IM ·  · source 2022 p35 · keyed by weight</p>
+<p class="meta">note: &gt;17.5 kg: give 2 ml in each thigh; for weights over 17.5 kg dilute 1 g in 3.5 ml sterile water and give 5.5 ml IM</p>
+<div class="tablewrap"><table><thead><tr><th>weight (kg)</th><th class="num">dose_mg</th><th class="num">volume_ml</th><th>OK?</th></tr></thead><tbody>
+<tr><td class="num">3.5–5.5</td><td class="num">312</td><td class="num">1.25</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">5.5–7</td><td class="num">440</td><td class="num">1.75</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">7–9</td><td class="num">625</td><td class="num">2.5</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">9–11</td><td class="num">750</td><td class="num">3</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">11–14</td><td class="num">810</td><td class="num">3.25</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">14–17.5</td><td class="num">1000</td><td class="num">4</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">17.5–&#8734;</td><td class="num">1500</td><td class="num">5.5</td><td><span class="chk"></span></td></tr>
+</tbody></table></div>
+<h3>diazepam_rectal</h3>
+<p class="meta">convulsing now · rectal ·  · source 2022 p35 · keyed by weight</p>
+<p class="meta">note: 0.5 mg/kg per rectum; repeat after 10 minutes if not stopped</p>
+<div class="tablewrap"><table><thead><tr><th>weight (kg)</th><th class="num">dose_mg</th><th class="num">volume_ml</th><th>OK?</th></tr></thead><tbody>
+<tr><td class="num">3–4</td><td class="num">2</td><td class="num">0.4</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">4–5</td><td class="num">2.5</td><td class="num">0.5</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">5–15</td><td class="num">5</td><td class="num">1</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">15–25</td><td class="num">7.5</td><td class="num">1.5</td><td><span class="chk"></span></td></tr>
+</tbody></table></div>
+<h3>young_infant_ampicillin_im</h3>
+<p class="meta">young infant (0-2 months) very severe disease -- with gentamicin · IM ·  · source 2014 p51 · keyed by weight</p>
+<p class="meta">note: 2014 young-infant regimen. Dose 50 mg/kg. 250 mg vial + 1.3 ml sterile water = 250 mg/1.5 ml.</p>
+<div class="tablewrap"><table><thead><tr><th>weight (kg)</th><th class="num">volume_ml</th><th>OK?</th></tr></thead><tbody>
+<tr><td class="num">1–1.5</td><td class="num">0.4</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">1.5–2</td><td class="num">0.5</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">2–2.5</td><td class="num">0.7</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">2.5–3</td><td class="num">0.8</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">3–3.5</td><td class="num">1.0</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">3.5–4</td><td class="num">1.1</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">4–4.5</td><td class="num">1.3</td><td><span class="chk"></span></td></tr>
+</tbody></table></div>
+<h3>artemether_lumefantrine</h3>
+<p class="meta">uncomplicated malaria (malaria test positive) · oral · two times daily for 3 days · source 2014 p16 · keyed by weight</p>
+<p class="meta">note: first dose in clinic, observe 1 hour, repeat if vomits within an hour; take with food</p>
+<div class="tablewrap"><table><thead><tr><th>weight (kg)</th><th class="num">tablets_per_dose</th><th>OK?</th></tr></thead><tbody>
+<tr><td class="num">5–10</td><td class="num">1</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">10–14</td><td class="num">1</td><td><span class="chk"></span></td></tr>
+<tr><td class="num">14–19</td><td class="num">2</td><td><span class="chk"></span></td></tr>
+</tbody></table></div>
+<h2>Specific things to check</h2><ul class="check">
+<li><span class="chk"></span><span>Confirm every weight/age band boundary against the source table (off-by-one on a band edge is a dosing error).</span></li>
+<li><span class="chk"></span><span>Ceftriaxone dilution and per-thigh split (&gt;17.5kg) -- 2022 p35.</span></li>
+<li><span class="chk"></span><span>2014 uses ampicillin+gentamicin for the young infant; 2022 sick-child pre-referral is ceftriaxone. Confirm which the national adaptation wants.</span></li>
+<li><span class="chk"></span><span>ART regimens are edition- and country-specific -- verify against current national ART guidelines, not this booklet.</span></li>
+<li><span class="chk"></span><span>Zinc, ORS volumes, vitamin A, mebendazole are stable across editions but confirm.</span></li>
+<li><span class="chk"></span><span>Fever severe label kept as very_severe_febrile_disease (2014) with bulging fontanelle added — acceptable?</span></li>
+<li><span class="chk"></span><span>HIV severity: all tiers MODERATE except hiv_infection_unlikely (MILD), none PINK (ART not urgent) — acceptable?</span></li>
+<li><span class="chk"></span><span>Young-infant treatment emits no specific dose (IM antibiotics / referral only) — acceptable?</span></li>
+</ul>
+<p class="meta">Full per-branch checklist items are in the <code>src/sft/extended_protocol.py</code> and <code>src/sft/young_infant.py</code> docstrings.</p>
+<div class="signoff"><b>Sign-off</b><div class="row"><div class="field">Reviewer name</div><div class="field">Signature</div><div class="field">Date</div></div><div class="row"><div class="field">National adaptation reviewed against</div></div></div>
+</div>

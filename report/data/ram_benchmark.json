@@ -1,6 +1,6 @@
 {
   "model": "models/Qwen3.5-0.8B-IMCI-Q4_K_M.gguf",
-  "peak_ram_mb": 956.84375,
-  "peak_cpu_percent": 408.5,
-  "seff": 86.33080357142858
+  "peak_ram_mb": 956.78515625,
+  "peak_cpu_percent": 424.3,
+  "seff": 86.33164062499999
 }
