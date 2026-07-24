@@ -112,6 +112,26 @@ def _drugs_for(label: str) -> str:
     return ", ".join(drugs) if drugs else "—"
 
 
+_BAND_META = ("age_band", "weight_kg_min", "weight_kg_max", "age_months_min", "age_months_max")
+
+
+def _dose_fields(sample: dict) -> list[str]:
+    """Dose value columns: exclude band-boundary keys and any _-prefixed notes."""
+    return [k for k in sample if not k.startswith("_") and k not in _BAND_META]
+
+
+def _range_header(key: str) -> str:
+    return {"weight": "weight (kg)", "age": "age (months)", "flat": "applies to"}.get(key, "band")
+
+
+def _band_str(key: str, b: dict, inf: str = "∞", dash: str = "–") -> str:
+    if key == "flat":
+        return b.get("age_band", "all")
+    lo, hi = ((b.get("weight_kg_min"), b.get("weight_kg_max")) if key == "weight"
+              else (b.get("age_months_min"), b.get("age_months_max")))
+    return f"{lo}{dash}{inf if hi is None else hi}"
+
+
 _SEV_TIER = {"severe": ("refer", "PINK · refer urgently"),
              "moderate": ("treat", "YELLOW · treat + follow up"),
              "mild": ("home", "GREEN · home care")}
@@ -243,16 +263,11 @@ def emit_html() -> str:
         P.append(f'<p class="meta">{_esc(sub)}</p>')
         if entry.get("note"):
             P.append(f'<p class="meta">note: {_esc(entry["note"])}</p>')
-        sample = entry["bands"][0]
-        dose_fields = [k for k in sample if k not in
-                       ("age_band", "weight_kg_min", "weight_kg_max", "age_months_min", "age_months_max")]
-        rng = "weight (kg)" if key == "weight" else "age (months)"
-        head = f'<th>{rng}</th>' + "".join(f'<th class="num">{_esc(f)}</th>' for f in dose_fields) + '<th>OK?</th>'
+        dose_fields = _dose_fields(entry["bands"][0])
+        head = f'<th>{_range_header(key)}</th>' + "".join(f'<th class="num">{_esc(f)}</th>' for f in dose_fields) + '<th>OK?</th>'
         P.append('<div class="tablewrap"><table><thead><tr>' + head + '</tr></thead><tbody>')
         for b in entry["bands"]:
-            lo, hi = ((b.get("weight_kg_min"), b.get("weight_kg_max")) if key == "weight"
-                      else (b.get("age_months_min"), b.get("age_months_max")))
-            band = f"{lo}–{'&#8734;' if hi is None else hi}"
+            band = _band_str(key, b, inf="&#8734;")
             cells = "".join(f'<td class="num">{_esc(str(b.get(f,"")))}</td>' for f in dose_fields)
             P.append(f'<tr><td class="num">{band}</td>{cells}<td><span class="chk"></span></td></tr>')
         P.append('</tbody></table></div>')
@@ -411,20 +426,15 @@ def emit_tex() -> str:
                  rf"\textperiodcentered{{}} keyed by {key}}}\\[-2pt]")
         if entry.get("note"):
             T.append(rf"{{\footnotesize note: {_tex(entry['note'])}}}\\[-2pt]")
-        sample = entry["bands"][0]
-        dose_fields = [k for k in sample if k not in
-                       ("age_band", "weight_kg_min", "weight_kg_max", "age_months_min", "age_months_max")]
-        rng = "weight (kg)" if key == "weight" else "age (months)"
+        dose_fields = _dose_fields(entry["bands"][0])
         cols = "l " + " ".join(["r"] * len(dose_fields)) + " c"
         T.append(rf"\begin{{longtable}}{{@{{}}{cols}@{{}}}}")
-        head = rf"\rowcolor{{rule!40}}\footnotesize\textbf{{{_tex(rng)}}} & " + \
+        head = rf"\rowcolor{{rule!40}}\footnotesize\textbf{{{_tex(_range_header(key))}}} & " + \
             " & ".join(rf"\footnotesize\textbf{{{_tex(f)}}}" for f in dose_fields) + r" & \footnotesize\textbf{OK}\\"
         T.append(head)
         T.append(r"\endhead")
         for b in entry["bands"]:
-            lo, hi = ((b.get("weight_kg_min"), b.get("weight_kg_max")) if key == "weight"
-                      else (b.get("age_months_min"), b.get("age_months_max")))
-            band = f"{lo}--{'$\\infty$' if hi is None else hi}"
+            band = _band_str(key, b, inf=r"$\infty$", dash="--")
             cells = " & ".join(rf"\footnotesize {_tex(b.get(f,''))}" for f in dose_fields)
             T.append(rf"\footnotesize {band} & {cells} & {ok_box(name)}\\")
         T.append(r"\end{longtable}")
@@ -503,18 +513,11 @@ def main() -> int:
         if entry.get("dilution"):
             L.append(f"  \ndilution: {entry['dilution']}")
         # dose columns = whatever numeric fields the band carries
-        sample = entry["bands"][0]
-        dose_fields = [k for k in sample if k not in
-                       ("age_band", "weight_kg_min", "weight_kg_max", "age_months_min", "age_months_max")]
-        rng = "weight (kg)" if key == "weight" else "age (months)"
-        L.append(f"\n| {rng} band | " + " | ".join(dose_fields) + " | OK? |")
+        dose_fields = _dose_fields(entry["bands"][0])
+        L.append(f"\n| {_range_header(key)} | " + " | ".join(dose_fields) + " | OK? |")
         L.append("|---|" + "|".join(["---"] * len(dose_fields)) + "|---|")
         for b in entry["bands"]:
-            if key == "weight":
-                lo, hi = b.get("weight_kg_min"), b.get("weight_kg_max")
-            else:
-                lo, hi = b.get("age_months_min"), b.get("age_months_max")
-            band = f"{lo}–{'∞' if hi is None else hi}"
+            band = _band_str(key, b)
             vals = " | ".join(str(b.get(f, "")) for f in dose_fields)
             L.append(f"| {band} | {vals} | |")
     L.append("\n- [ ] **All dosing tables** reviewed and correct  ·  corrections: ______________\n")

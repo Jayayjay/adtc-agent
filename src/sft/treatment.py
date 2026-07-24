@@ -45,18 +45,24 @@ LABEL_TO_DRUGS: dict[str, list[str]] = {
     "malaria": ["artemether_lumefantrine", "paracetamol"],
     "fever_no_malaria": ["paracetamol"],
     "fever_malaria_test_required": ["paracetamol"],
-    "severe_complicated_measles": ["vitamin_a"],
+    # clinician 2026-07-22: severe measles action gives an antibiotic; 2022 chart
+    # uses amoxicillin (unless already on IM ceftriaxone for another reason).
+    "severe_complicated_measles": ["vitamin_a", "amoxicillin"],
     "measles_with_eye_or_mouth_complications": ["vitamin_a"],
     "measles": ["vitamin_a"],
     "severe_anaemia": [],
-    "anaemia": [],
+    "anaemia": ["iron"],  # clinician 2026-07-22: anaemia treatment is iron
     "no_anaemia": [],
     "complicated_severe_acute_malnutrition": ["vitamin_a"],
     "uncomplicated_severe_acute_malnutrition": ["amoxicillin", "vitamin_a"],
     "moderate_acute_malnutrition": ["vitamin_a"],
     "no_acute_malnutrition": [],
     "wheeze": [],                                                    # salbutamol not in tables
-    "wheeze_with_danger_sign": [],
+    # clinician 2026-07-22: severe (danger-sign) wheeze needs a pre-referral
+    # antibiotic. Mapped to the 2022 sick-child pre-referral (ceftriaxone IM),
+    # consistent with very_severe_disease; clinician suggested amoxicillin/
+    # ampicillin -- CONFIRM the agent for this severe path.
+    "wheeze_with_danger_sign": ["ceftriaxone_im"],
     "severe_persistent_diarrhoea": ["vitamin_a"],
     "persistent_diarrhoea": ["zinc", "vitamin_a"],
     "severe_dysentery": [],

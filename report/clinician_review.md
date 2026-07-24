@@ -17,7 +17,7 @@
 | `very_severe_febrile_disease` | PINK (refer urgently) | Fever with a general danger sign or a stiff neck classifies as very severe febrile disease, whatever the malaria test shows. | Give the first dose of an appropriate antibiotic. Treat the child to prevent low blood sugar. Give paracetamol for high fever. Refer URGENTLY to hospital. | ceftriaxone_im, paracetamol | |
 | `malaria` | YELLOW (treat + follow up) | The malaria test is positive and there are no danger signs or stiff neck. | Give a first-line oral antimalarial as the national guideline directs. Give paracetamol for high fever. Advise the mother when to return immediately. Follow up in 3 days if the fever persists. | artemether_lumefantrine, paracetamol | |
 | `fever_no_malaria` | GREEN (home care) | The malaria test is negative, so this fever is not malaria. | Look for and treat another cause of fever. Give paracetamol for high fever. Advise the mother when to return immediately. Follow up in 3 days if the fever persists. | paracetamol | |
-| `fever_malaria_test_required` | YELLOW (treat + follow up) | This child has fever in a malaria risk area, or has travelled to one, and no malaria test has been done. The chart booklet requires a malaria test before the fever can be classified. | Do a malaria test (RDT or microscopy) now and classify on the result. Give paracetamol for high fever meanwhile, and refer urgently if any danger sign appears. | paracetamol | |
+| `fever_malaria_test_required` | GREEN (home care) | This child has fever in a malaria risk area, or has travelled to one, and no malaria test has been done. The chart booklet requires a malaria test before the fever can be classified. | Do a malaria test (RDT or microscopy) now and classify on the result. Give paracetamol for high fever meanwhile, and refer urgently if any danger sign appears. | paracetamol | |
 
 - [ ] **Fever / malaria** reviewed and correct  ·  corrections: ______________________
 
@@ -26,7 +26,7 @@
 
 | Classification | Severity | Trigger (as coded) | Action | Drugs (dosed) | Clinician: OK? correction |
 |---|---|---|---|---|---|
-| `severe_complicated_measles` | PINK (refer urgently) | A generalised rash with cough, runny nose, or red eyes meets the measles case definition. There is clouding of the cornea, which makes this severe complicated measles. | Give vitamin A. Give the first dose of an appropriate antibiotic. If there is clouding of the cornea or pus draining from the eye, apply tetracycline eye ointment. Refer URGENTLY to hospital. | vitamin_a | |
+| `severe_complicated_measles` | PINK (refer urgently) | A generalised rash with cough, runny nose, or red eyes meets the measles case definition. There is clouding of the cornea, which makes this severe complicated measles. | Give vitamin A. Give the first dose of an appropriate antibiotic. If there is clouding of the cornea or pus draining from the eye, apply tetracycline eye ointment. Refer URGENTLY to hospital. | vitamin_a, amoxicillin | |
 | `measles_with_eye_or_mouth_complications` | YELLOW (treat + follow up) | A generalised rash with cough, runny nose, or red eyes meets the measles case definition. There is pus draining from the eye. | Give vitamin A. If there is pus draining from the eye, apply tetracycline eye ointment. If there are mouth ulcers, treat with gentian violet. Follow up in 3 days. | vitamin_a | |
 | `measles` | GREEN (home care) | A generalised rash with cough, runny nose, or red eyes meets the measles case definition. There are no eye or mouth complications and no danger signs. | Give vitamin A. Advise the mother when to return immediately. | vitamin_a | |
 
@@ -38,7 +38,7 @@
 | Classification | Severity | Trigger (as coded) | Action | Drugs (dosed) | Clinician: OK? correction |
 |---|---|---|---|---|---|
 | `severe_anaemia` | PINK (refer urgently) | There is severe palmar pallor. | Refer URGENTLY to hospital. | — | |
-| `anaemia` | YELLOW (treat + follow up) | There is some palmar pallor. | Give iron. Give mebendazole if the child is 1 year or older and has not had a dose in the last 6 months. Advise the mother when to return immediately. Follow up in 14 days. | — | |
+| `anaemia` | YELLOW (treat + follow up) | There is some palmar pallor. | Give iron. Give mebendazole if the child is 1 year or older and has not had a dose in the last 6 months. Advise the mother when to return immediately. Follow up in 14 days. | iron | |
 | `no_anaemia` | GREEN (home care) | There is no palmar pallor. | No treatment for anaemia is needed. | — | |
 
 - [ ] **Anaemia** reviewed and correct  ·  corrections: ______________________
@@ -60,7 +60,7 @@
 
 | Classification | Severity | Trigger (as coded) | Action | Drugs (dosed) | Clinician: OK? correction |
 |---|---|---|---|---|---|
-| `wheeze_with_danger_sign` | PINK (refer urgently) | The child has wheeze. There is a general danger sign, so give salbutamol and refer urgently. | Give salbutamol by spacer. Give the first dose of an appropriate antibiotic and refer URGENTLY to hospital. | — | |
+| `wheeze_with_danger_sign` | PINK (refer urgently) | The child has wheeze. There is a general danger sign, so give salbutamol and refer urgently. | Give salbutamol by spacer. Give the first dose of an appropriate antibiotic and refer URGENTLY to hospital. | ceftriaxone_im | |
 | `wheeze` | YELLOW (treat + follow up) | The child has wheeze. | Give salbutamol by spacer for 5 days. Follow up in 5 days if the child is still wheezing. If a cough lasts more than 14 days or the wheeze is recurrent, assess for TB or asthma. | — | |
 
 - [ ] **Wheeze (cough sub-branch)** reviewed and correct  ·  corrections: ______________________
@@ -171,7 +171,7 @@ Doses are NOT graded by the model scorer; they are emitted verbatim from these t
 ### amoxicillin — pneumonia, acute ear infection  
 route: oral  ·  two times daily for 5 days  ·  source: 2014 p16  ·  keyed by weight
 
-| weight (kg) band | tablet_250mg | syrup_250mg_per_5ml_ml | OK? |
+| weight (kg) | tablet_250mg | syrup_250mg_per_5ml_ml | OK? |
 |---|---|---|---|
 | 4–10 | 1 | 5 | |
 | 10–14 | 2 | 10 | |
@@ -180,15 +180,15 @@ route: oral  ·  two times daily for 5 days  ·  source: 2014 p16  ·  keyed by 
 ### cotrimoxazole_prophylaxis — prophylaxis in HIV confirmed or exposed child  
 route: oral  ·  once a day, starting at 4-6 weeks of age  ·  source: 2014 p16  ·  keyed by age
 
-| age (months) band | syrup_40_200_per_5ml_ml | paed_tablet_20_100 | adult_tablet_80_400 | OK? |
+| age (months) | syrup_40_200_per_5ml_ml | paed_tablet_20_100 | adult_tablet_80_400 | OK? |
 |---|---|---|---|---|
-| 0–6 | 2.5 | 0.5 | 0.25 | |
+| 1.5–6 | 2.5 | 0.5 | 0.25 | |
 | 6–60 | 5 | 2 | 0.5 | |
 
 ### paracetamol — high fever (>38.5C) or ear pain  
 route: oral  ·  every 6 hours until fever or pain is gone  ·  source: 2014 p16  ·  keyed by weight
 
-| weight (kg) band | tablet_100mg | tablet_500mg | OK? |
+| weight (kg) | tablet_100mg | tablet_500mg | OK? |
 |---|---|---|---|
 | 4–14 | 1 | 0.25 | |
 | 14–19 | 1.5 | 0.5 | |
@@ -196,7 +196,7 @@ route: oral  ·  every 6 hours until fever or pain is gone  ·  source: 2014 p16
 ### zinc — diarrhoea (age 2 months up to 5 years)  
 route: oral  ·  daily for 14 days  ·  source: 2014 (GIVE EXTRA FLUID FOR DIARRHOEA)  ·  keyed by age
 
-| age (months) band | tablets_daily | OK? |
+| age (months) | tablets_daily | OK? |
 |---|---|---|
 | 2–6 | 0.5 | |
 | 6–∞ | 1 | |
@@ -204,25 +204,33 @@ route: oral  ·  daily for 14 days  ·  source: 2014 (GIVE EXTRA FLUID FOR DIARR
 ### ors_plan_a_extra_fluid — diarrhoea, no dehydration -- amount after each loose stool  
 route: oral  ·    ·  source: 2014 Plan A  ·  keyed by age
 
-| age (months) band | ml_after_each_loose_stool_min | ml_after_each_loose_stool_max | OK? |
+| age (months) | ml_after_each_loose_stool_min | ml_after_each_loose_stool_max | OK? |
 |---|---|---|---|
 | 0–24 | 50 | 100 | |
 | 24–∞ | 100 | 200 | |
 
-### vitamin_a — supplementation from 6 months; treatment dose for measles or persistent diarrhoea (NOT if dosed in past month or on RUTF)  
-route: oral  ·    ·  source: 2014 (Vitamin A supplementation and treatment)  ·  keyed by age
+### vitamin_a — TREATMENT dose for measles / persistent diarrhoea (also the supplementation dose for >=6 months). NOT if dosed in the past month or on RUTF.  
+route: oral  ·    ·  source: 2014 (Vitamin A supplementation and treatment); <6mo treatment band added per clinician 2026-07-22  ·  keyed by age
 
-| age (months) band | iu | OK? |
+| age (months) | iu | OK? |
 |---|---|---|
+| 0–6 | 50000 | |
 | 6–12 | 100000 | |
 | 12–∞ | 200000 | |
 
 ### mebendazole — deworming if hookworm/whipworm endemic, child >=1 year, no dose in previous 6 months  
 route: oral  ·  single dose in clinic  ·  source: 2014  ·  keyed by age
 
-| age (months) band | dose_mg | OK? |
+| age (months) | dose_mg | OK? |
 |---|---|---|
 | 12–∞ | 500 | |
+
+### iron — anaemia (some palmar pallor, or Hb 7-11 g/dl)  
+route: oral  ·  once daily for 3 months  ·  source: clinician 2026-07-22 (WHO IMCI Give Iron)  ·  keyed by flat
+
+| applies to | dose_text | OK? |
+|---|---|---|
+| all | ferrous sulfate, 3 mg/kg/day of elemental iron | |
 
 ### ceftriaxone_im — sick-child pre-referral (very severe disease, suspected meningitis, severe pneumonia, mastoiditis)  
 route: IM  ·    ·  source: 2022 p35  ·  keyed by weight
@@ -231,7 +239,7 @@ note: >17.5 kg: give 2 ml in each thigh; for weights over 17.5 kg dilute 1 g in 
   
 dilution: dilute 250 mg vial with 1 ml sterile water, or 500 mg with 2 ml sterile water (250 mg/ml)
 
-| weight (kg) band | dose_mg | volume_ml | OK? |
+| weight (kg) | dose_mg | volume_ml | OK? |
 |---|---|---|---|
 | 3.5–5.5 | 312 | 1.25 | |
 | 5.5–7 | 440 | 1.75 | |
@@ -246,7 +254,7 @@ route: rectal  ·    ·  source: 2022 p35  ·  keyed by weight
   
 note: 0.5 mg/kg per rectum; repeat after 10 minutes if not stopped
 
-| weight (kg) band | dose_mg | volume_ml | OK? |
+| weight (kg) | dose_mg | volume_ml | OK? |
 |---|---|---|---|
 | 3–4 | 2 | 0.4 | |
 | 4–5 | 2.5 | 0.5 | |
@@ -258,7 +266,7 @@ route: IM  ·    ·  source: 2014 p51  ·  keyed by weight
   
 note: 2014 young-infant regimen. Dose 50 mg/kg. 250 mg vial + 1.3 ml sterile water = 250 mg/1.5 ml.
 
-| weight (kg) band | volume_ml | OK? |
+| weight (kg) | volume_ml | OK? |
 |---|---|---|
 | 1–1.5 | 0.4 | |
 | 1.5–2 | 0.5 | |
@@ -273,7 +281,7 @@ route: oral  ·  two times daily for 3 days  ·  source: 2014 p16  ·  keyed by 
   
 note: first dose in clinic, observe 1 hour, repeat if vomits within an hour; take with food
 
-| weight (kg) band | tablets_per_dose | OK? |
+| weight (kg) | tablets_per_dose | OK? |
 |---|---|---|
 | 5–10 | 1 | |
 | 10–14 | 1 | |

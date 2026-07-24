@@ -53,12 +53,13 @@
       "source": "2014 p16",
       "bands": [
         {
-          "age_band": "less than 6 months",
+          "age_band": "6 weeks up to 6 months",
           "syrup_40_200_per_5ml_ml": 2.5,
           "paed_tablet_20_100": 0.5,
           "adult_tablet_80_400": 0.25,
-          "age_months_min": 0,
-          "age_months_max": 6
+          "age_months_min": 1.5,
+          "age_months_max": 6,
+          "_review": "clinician 2026-07-22: starts at 4-6 weeks of age, not birth; band min moved 0 -> 1.5 months."
         },
         {
           "age_band": "6 months up to 5 years",
@@ -139,10 +140,17 @@
       "key": "age"
     },
     "vitamin_a": {
-      "indication": "supplementation from 6 months; treatment dose for measles or persistent diarrhoea (NOT if dosed in past month or on RUTF)",
+      "indication": "TREATMENT dose for measles / persistent diarrhoea (also the supplementation dose for >=6 months). NOT if dosed in the past month or on RUTF.",
       "route": "oral",
-      "source": "2014 (Vitamin A supplementation and treatment)",
+      "source": "2014 (Vitamin A supplementation and treatment); <6mo treatment band added per clinician 2026-07-22",
+      "_review": "clinician 2026-07-22: added the <6 months = 50,000 IU treatment band (was missing); the 100,000/200,000 IU bands are both supplementation and treatment.",
       "bands": [
+        {
+          "age_band": "birth up to 6 months (treatment, e.g. measles)",
+          "iu": 50000,
+          "age_months_min": 0,
+          "age_months_max": 6
+        },
         {
           "age_band": "6 up to 12 months",
           "iu": 100000,
@@ -173,6 +181,21 @@
         }
       ],
       "key": "age"
+    },
+    "iron": {
+      "indication": "anaemia (some palmar pallor, or Hb 7-11 g/dl)",
+      "route": "oral",
+      "frequency": "once daily for 3 months",
+      "formulation": "ferrous sulfate",
+      "source": "clinician 2026-07-22 (WHO IMCI Give Iron)",
+      "_review": "clinician 2026-07-22: anaemia treatment must specify iron. Dose is weight-based (3 mg/kg/day elemental iron); rendered as the formula, not a fabricated per-band tablet count. If the national chart uses fixed age/weight-band tablet/syrup amounts, replace this with those bands.",
+      "key": "flat",
+      "bands": [
+        {
+          "age_band": "all",
+          "dose_text": "ferrous sulfate, 3 mg/kg/day of elemental iron"
+        }
+      ]
     },
     "ceftriaxone_im": {
       "indication": "sick-child pre-referral (very severe disease, suspected meningitis, severe pneumonia, mastoiditis)",

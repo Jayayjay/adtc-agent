@@ -308,8 +308,12 @@ def classify_fever_malaria(a: ExtendedAssessment) -> TriageResult | None:
         "test has been done. The chart booklet requires a malaria test before the fever can be "
         "classified."
     )
+    # clinician 2026-07-22: this is a triage-to-test step (no antimalarial given
+    # yet), so GREEN/MILD with "test now", not YELLOW. Danger signs are already
+    # handled by the pink branch above, so downgrading here does not hide a
+    # severely ill child.
     return TriageResult(
-        classification=Classification.MODERATE,
+        classification=Classification.MILD,
         condition_label="fever_malaria_test_required",
         reasoning=reasoning,
         recommended_action=(

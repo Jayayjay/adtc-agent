@@ -67,6 +67,8 @@ def _in_range(value: float, lo, hi) -> bool:
 
 
 def _band_matches(band: dict, key: str, weight_kg, age_months) -> bool:
+    if key == "flat":
+        return True  # single-band drug, dose does not vary by weight/age
     if key == "weight":
         if weight_kg is None:
             return False
@@ -75,7 +77,7 @@ def _band_matches(band: dict, key: str, weight_kg, age_months) -> bool:
         if age_months is None:
             return False
         return _in_range(age_months, band.get("age_months_min"), band.get("age_months_max"))
-    raise DosingError(f"Unknown band key {key!r} -- expected 'weight' or 'age'.")
+    raise DosingError(f"Unknown band key {key!r} -- expected 'weight', 'age', or 'flat'.")
 
 
 def dose_for(drug: str, weight_kg: float | None = None, age_months: int | None = None) -> dict:
@@ -153,7 +155,12 @@ def _render_ors_plan_a(b: dict) -> str:
             f"after each loose stool")
 
 
+def _render_iron(b: dict) -> str:
+    return f"{b['dose_text']} once daily for 3 months"
+
+
 _RENDERERS = {
+    "iron": _render_iron,
     "amoxicillin": _render_amoxicillin,
     "paracetamol": _render_paracetamol,
     "zinc": _render_zinc,
