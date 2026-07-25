@@ -322,25 +322,25 @@
       "mode": "raw",
       "temperature": 0.0,
       "samples_per_case": 1,
-      "accuracy": 60.0,
-      "format_compliance": 60.0,
+      "accuracy": 50.0,
+      "format_compliance": 50.0,
       "undertriage_rate": 0.0,
       "overtriage_rate": 0.0,
       "per_case": [
         {
           "id": "nl_001",
           "expected": "moderate",
-          "predicted": null,
+          "predicted": "moderate",
           "all_samples": [
-            null
+            "moderate"
           ]
         },
         {
           "id": "nl_002",
           "expected": "mild",
-          "predicted": "mild",
+          "predicted": null,
           "all_samples": [
-            "mild"
+            null
           ]
         },
         {
@@ -378,9 +378,9 @@
         {
           "id": "nl_007",
           "expected": "severe",
-          "predicted": "severe",
+          "predicted": null,
           "all_samples": [
-            "severe"
+            null
           ]
         },
         {
