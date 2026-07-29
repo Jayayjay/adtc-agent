@@ -700,7 +700,10 @@ def make_young_infant_example(rng: random.Random, case_id: str) -> dict | None:
     from src.sft.young_infant_verbalize import YI_LABEL_TEXT, render_young_infant_answer, verbalize_young_infant
 
     panel = rng.choice(["bacterial", "jaundice", "diarrhoea", "congenital"])
-    age_days = rng.randint(0, 59)
+    # Over-weight the young ages so the age-gated severe labels are reachable for
+    # the stratifier: severe jaundice needs <24h (age 0), severe dehydration needs
+    # <1 month. A flat randint(0,59) makes those too rare to fill a per-label floor.
+    age_days = rng.choice([0, 0, 0, 1, 1, 2, 3, 4, 5, 7, 10, 14, 18, 22, 26, 29, 34, 40, 48, 56])
 
     if panel == "bacterial":
         roll = rng.random()

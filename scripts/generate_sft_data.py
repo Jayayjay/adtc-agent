@@ -113,9 +113,35 @@ def _acknowledged_extra(child, rng: random.Random) -> str | None:
     return branch_extra.get(decisive_branch_of(child))
 
 
+def _stratified_fill(maker, rng, per_label: int, labels, prefix: str, attempt_mult: int = 120):
+    """Generate examples from `maker`, capping each condition_label at `per_label`
+    so the output is BALANCED across labels rather than following the natural
+    (heavily skewed) sampling distribution. Rare labels that can't be reached in
+    the attempt budget fall short; common ones stop at the cap. Returns
+    (records, per-label Counter)."""
+    from collections import Counter
+
+    counts: Counter = Counter()
+    recs: list[dict] = []
+    target = per_label * len(labels)
+    max_attempts = target * attempt_mult
+    attempts = 0
+    while len(recs) < target and attempts < max_attempts:
+        attempts += 1
+        ex = maker(rng, f"{prefix}_{len(recs):06d}")
+        if ex is None:
+            continue
+        lbl = ex["meta"].get("condition_label")
+        if lbl is None or counts[lbl] >= per_label:
+            continue
+        counts[lbl] += 1
+        recs.append(ex)
+    return recs, counts
+
+
 def generate(num_triage: int, seed: int, chat_path: Path | None,
-             include_extended: bool = False, extended_frac: float = 0.15,
-             yi_frac: float = 0.06, breathing_cases: int = 1000) -> list[dict]:
+             include_extended: bool = False, ext_per_label: int = 120,
+             yi_per_label: int = 90, breathing_cases: int = 1000) -> list[dict]:
     rng = random.Random(seed)
     records: list[dict] = []
 
@@ -147,29 +173,28 @@ def generate(num_triage: int, seed: int, chat_path: Path | None,
     # the branches imci_protocol.py declares unmodelled -- addressing risk #6,
     # but only after sign-off (see src/sft/extended_protocol.py).
     if include_extended:
-        want_ext = int(len(records) * extended_frac)
-        made = attempts = 0
-        while made < want_ext and attempts < want_ext * 20:
-            attempts += 1
-            ex = make_extended_example(rng, f"sft_ext_{made:06d}")
-            if ex is not None:
-                records.append(ex)
-                made += 1
-        print(f"extended branches: {made} examples (fever/malaria, measles, anaemia, "
-              f"malnutrition, wheeze, persistent diarrhoea, dysentery, sore throat, growth, HIV) "
+        # LABEL-stratified, not natural-distribution: cap each label at N so the
+        # rare SEVERE labels (severe_dysentery, complicated SAM, yi_severe_*) get
+        # a fair floor instead of 3 examples while common labels dominate. The
+        # first retrain under-triaged exactly those rare labels because they were
+        # starved (~45-80/label vs the core's ~535). See eval/results/*extended*.
+        from src.sft.extended_protocol import EXTENDED_LABELS
+        from src.sft.young_infant import YOUNG_INFANT_LABELS
+
+        ext, ec = _stratified_fill(make_extended_example, rng, ext_per_label,
+                                   EXTENDED_LABELS, "sft_ext")
+        records += ext
+        print(f"extended branches: {len(ext)} examples across {len(ec)}/{len(EXTENDED_LABELS)} "
+              f"labels (cap {ext_per_label}/label; min {min(ec.values())}, max {max(ec.values())}) "
               f"-- UNREVIEWED clinical logic")
 
         # Young-infant (0-2mo) chart: modelled now, no longer a refusal.
-        want_yi = int(len(records) * yi_frac)
-        made = attempts = 0
-        while made < want_yi and attempts < want_yi * 20:
-            attempts += 1
-            ex = make_young_infant_example(rng, f"sft_yi_{made:06d}")
-            if ex is not None:
-                records.append(ex)
-                made += 1
-        print(f"young-infant branches: {made} examples (bacterial infection/jaundice, "
-              f"diarrhoea, congenital) -- UNREVIEWED clinical logic")
+        yi, yc = _stratified_fill(make_young_infant_example, rng, yi_per_label,
+                                  YOUNG_INFANT_LABELS, "sft_yi")
+        records += yi
+        print(f"young-infant branches: {len(yi)} examples across {len(yc)}/{len(YOUNG_INFANT_LABELS)} "
+              f"labels (cap {yi_per_label}/label; min {min(yc.values())}, max {max(yc.values())}) "
+              f"-- UNREVIEWED clinical logic")
 
     n_triage = len(records)
     n_total = int(n_triage / MIXTURE[Kind.TRIAGE])
