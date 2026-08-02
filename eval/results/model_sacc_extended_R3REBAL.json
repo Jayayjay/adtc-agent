@@ -1,0 +1,1553 @@
+{
+  "fine_tuned": {
+    "model": "models/Qwen3.5-0.8B-IMCI-Q4_K_M.gguf",
+    "chat_sys_greedy": {
+      "n_cases": 34,
+      "mode": "chat+sys",
+      "temperature": 0.0,
+      "samples_per_case": 1,
+      "accuracy": 79.4,
+      "format_compliance": 97.1,
+      "undertriage_rate": 17.6,
+      "overtriage_rate": 0.0,
+      "per_case": [
+        {
+          "id": "ext_wheeze",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Wheeze",
+          "label_correct": true
+        },
+        {
+          "id": "ext_wheeze_danger",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Wheeze with a general danger sign",
+          "label_correct": true
+        },
+        {
+          "id": "ext_persistent_diarrhoea",
+          "expected": "moderate",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Persistent diarrhoea",
+          "label_correct": false
+        },
+        {
+          "id": "ext_severe_persistent_diarrhoea",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Severe persistent diarrhoea",
+          "label_correct": true
+        },
+        {
+          "id": "ext_dysentery",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Dysentery",
+          "label_correct": true
+        },
+        {
+          "id": "ext_severe_dysentery",
+          "expected": "severe",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Severe dysentery",
+          "label_correct": false
+        },
+        {
+          "id": "ext_strep_throat",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Streptococcal sore throat",
+          "label_correct": true
+        },
+        {
+          "id": "ext_sore_throat_viral",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Sore throat, not streptococcal",
+          "label_correct": true
+        },
+        {
+          "id": "ext_growth",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Growth problem",
+          "label_correct": true
+        },
+        {
+          "id": "ext_malaria",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Malaria",
+          "label_correct": true
+        },
+        {
+          "id": "ext_fever_no_malaria",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Fever, malaria unlikely",
+          "label_correct": true
+        },
+        {
+          "id": "ext_very_severe_febrile",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Very severe febrile disease",
+          "label_correct": true
+        },
+        {
+          "id": "ext_severe_measles",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Severe complicated measles",
+          "label_correct": true
+        },
+        {
+          "id": "ext_measles",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Measles",
+          "label_correct": true
+        },
+        {
+          "id": "ext_severe_anaemia",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Severe anaemia",
+          "label_correct": true
+        },
+        {
+          "id": "ext_anaemia",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Anaemia",
+          "label_correct": true
+        },
+        {
+          "id": "ext_complicated_sam",
+          "expected": "severe",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Complicated severe acute malnutrition",
+          "label_correct": true
+        },
+        {
+          "id": "ext_moderate_malnutrition",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Moderate acute malnutrition",
+          "label_correct": false
+        },
+        {
+          "id": "ext_hiv_confirmed",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Confirmed HIV infection",
+          "label_correct": true
+        },
+        {
+          "id": "ext_hiv_exposed",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "HIV exposed",
+          "label_correct": true
+        },
+        {
+          "id": "ext_hiv_suspected",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Suspected symptomatic HIV",
+          "label_correct": false
+        },
+        {
+          "id": "ext_hiv_possible",
+          "expected": "moderate",
+          "predicted": null,
+          "all_samples": [
+            null
+          ],
+          "expected_label": "Possible HIV infection",
+          "label_correct": false
+        },
+        {
+          "id": "ext_hiv_unlikely",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "HIV infection unlikely",
+          "label_correct": true
+        },
+        {
+          "id": "yi_very_severe",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Very severe disease (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_local_infection",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Local bacterial infection",
+          "label_correct": true
+        },
+        {
+          "id": "yi_severe_jaundice",
+          "expected": "severe",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Severe jaundice",
+          "label_correct": false
+        },
+        {
+          "id": "yi_jaundice",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Jaundice",
+          "label_correct": true
+        },
+        {
+          "id": "yi_severe_dehydration",
+          "expected": "severe",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Severe dehydration (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_some_dehydration",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Some dehydration (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_no_dehydration",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Diarrhoea with no dehydration (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_dysentery",
+          "expected": "severe",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Dysentery (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_congenital_priority",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Congenital priority sign",
+          "label_correct": true
+        },
+        {
+          "id": "yi_congenital_abnormal",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Congenital abnormal sign",
+          "label_correct": true
+        },
+        {
+          "id": "yi_congenital_syphilis",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Possible congenital syphilis",
+          "label_correct": true
+        }
+      ],
+      "label_accuracy": 67.6
+    },
+    "chat_nosys_greedy": {
+      "n_cases": 34,
+      "mode": "chat",
+      "temperature": 0.0,
+      "samples_per_case": 1,
+      "accuracy": 88.2,
+      "format_compliance": 100.0,
+      "undertriage_rate": 11.8,
+      "overtriage_rate": 0.0,
+      "per_case": [
+        {
+          "id": "ext_wheeze",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Wheeze",
+          "label_correct": true
+        },
+        {
+          "id": "ext_wheeze_danger",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Wheeze with a general danger sign",
+          "label_correct": true
+        },
+        {
+          "id": "ext_persistent_diarrhoea",
+          "expected": "moderate",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Persistent diarrhoea",
+          "label_correct": false
+        },
+        {
+          "id": "ext_severe_persistent_diarrhoea",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Severe persistent diarrhoea",
+          "label_correct": true
+        },
+        {
+          "id": "ext_dysentery",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Dysentery",
+          "label_correct": true
+        },
+        {
+          "id": "ext_severe_dysentery",
+          "expected": "severe",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Severe dysentery",
+          "label_correct": false
+        },
+        {
+          "id": "ext_strep_throat",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Streptococcal sore throat",
+          "label_correct": true
+        },
+        {
+          "id": "ext_sore_throat_viral",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Sore throat, not streptococcal",
+          "label_correct": true
+        },
+        {
+          "id": "ext_growth",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Growth problem",
+          "label_correct": true
+        },
+        {
+          "id": "ext_malaria",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Malaria",
+          "label_correct": true
+        },
+        {
+          "id": "ext_fever_no_malaria",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Fever, malaria unlikely",
+          "label_correct": true
+        },
+        {
+          "id": "ext_very_severe_febrile",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Very severe febrile disease",
+          "label_correct": true
+        },
+        {
+          "id": "ext_severe_measles",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Severe complicated measles",
+          "label_correct": true
+        },
+        {
+          "id": "ext_measles",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Measles",
+          "label_correct": true
+        },
+        {
+          "id": "ext_severe_anaemia",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Severe anaemia",
+          "label_correct": true
+        },
+        {
+          "id": "ext_anaemia",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Anaemia",
+          "label_correct": true
+        },
+        {
+          "id": "ext_complicated_sam",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Complicated severe acute malnutrition",
+          "label_correct": true
+        },
+        {
+          "id": "ext_moderate_malnutrition",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Moderate acute malnutrition",
+          "label_correct": false
+        },
+        {
+          "id": "ext_hiv_confirmed",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Confirmed HIV infection",
+          "label_correct": true
+        },
+        {
+          "id": "ext_hiv_exposed",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "HIV exposed",
+          "label_correct": true
+        },
+        {
+          "id": "ext_hiv_suspected",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Suspected symptomatic HIV",
+          "label_correct": false
+        },
+        {
+          "id": "ext_hiv_possible",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Possible HIV infection",
+          "label_correct": false
+        },
+        {
+          "id": "ext_hiv_unlikely",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "HIV infection unlikely",
+          "label_correct": true
+        },
+        {
+          "id": "yi_very_severe",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Very severe disease (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_local_infection",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Local bacterial infection",
+          "label_correct": true
+        },
+        {
+          "id": "yi_severe_jaundice",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Severe jaundice",
+          "label_correct": true
+        },
+        {
+          "id": "yi_jaundice",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Jaundice",
+          "label_correct": true
+        },
+        {
+          "id": "yi_severe_dehydration",
+          "expected": "severe",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Severe dehydration (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_some_dehydration",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Some dehydration (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_no_dehydration",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Diarrhoea with no dehydration (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_dysentery",
+          "expected": "severe",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Dysentery (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_congenital_priority",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Congenital priority sign",
+          "label_correct": true
+        },
+        {
+          "id": "yi_congenital_abnormal",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Congenital abnormal sign",
+          "label_correct": true
+        },
+        {
+          "id": "yi_congenital_syphilis",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Possible congenital syphilis",
+          "label_correct": true
+        }
+      ],
+      "label_accuracy": 70.6
+    },
+    "chat_sys_sampled": {
+      "n_cases": 34,
+      "mode": "chat+sys",
+      "temperature": 0.8,
+      "samples_per_case": 5,
+      "accuracy": 79.4,
+      "format_compliance": 100.0,
+      "undertriage_rate": 17.6,
+      "overtriage_rate": 2.9,
+      "per_case": [
+        {
+          "id": "ext_wheeze",
+          "expected": "moderate",
+          "predicted": "severe",
+          "all_samples": [
+            "severe",
+            "severe",
+            "severe",
+            "severe",
+            "severe"
+          ],
+          "expected_label": "Wheeze",
+          "label_correct": false
+        },
+        {
+          "id": "ext_wheeze_danger",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe",
+            "severe",
+            "severe",
+            "severe",
+            "severe"
+          ],
+          "expected_label": "Wheeze with a general danger sign",
+          "label_correct": true
+        },
+        {
+          "id": "ext_persistent_diarrhoea",
+          "expected": "moderate",
+          "predicted": "mild",
+          "all_samples": [
+            "mild",
+            "mild",
+            "mild",
+            "mild",
+            "mild"
+          ],
+          "expected_label": "Persistent diarrhoea",
+          "label_correct": false
+        },
+        {
+          "id": "ext_severe_persistent_diarrhoea",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe",
+            "severe",
+            "severe",
+            "severe",
+            "severe"
+          ],
+          "expected_label": "Severe persistent diarrhoea",
+          "label_correct": true
+        },
+        {
+          "id": "ext_dysentery",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Dysentery",
+          "label_correct": true
+        },
+        {
+          "id": "ext_severe_dysentery",
+          "expected": "severe",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Severe dysentery",
+          "label_correct": false
+        },
+        {
+          "id": "ext_strep_throat",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Streptococcal sore throat",
+          "label_correct": true
+        },
+        {
+          "id": "ext_sore_throat_viral",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild",
+            "mild",
+            "mild",
+            "mild",
+            "mild"
+          ],
+          "expected_label": "Sore throat, not streptococcal",
+          "label_correct": true
+        },
+        {
+          "id": "ext_growth",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Growth problem",
+          "label_correct": true
+        },
+        {
+          "id": "ext_malaria",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Malaria",
+          "label_correct": true
+        },
+        {
+          "id": "ext_fever_no_malaria",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild",
+            "mild",
+            "mild",
+            "mild",
+            "mild"
+          ],
+          "expected_label": "Fever, malaria unlikely",
+          "label_correct": true
+        },
+        {
+          "id": "ext_very_severe_febrile",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe",
+            "severe",
+            "severe",
+            "severe",
+            "severe"
+          ],
+          "expected_label": "Very severe febrile disease",
+          "label_correct": true
+        },
+        {
+          "id": "ext_severe_measles",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe",
+            "severe",
+            "severe",
+            "severe",
+            "severe"
+          ],
+          "expected_label": "Severe complicated measles",
+          "label_correct": false
+        },
+        {
+          "id": "ext_measles",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild",
+            "mild",
+            "mild",
+            "mild",
+            "mild"
+          ],
+          "expected_label": "Measles",
+          "label_correct": true
+        },
+        {
+          "id": "ext_severe_anaemia",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe",
+            "severe",
+            "severe",
+            "severe",
+            "severe"
+          ],
+          "expected_label": "Severe anaemia",
+          "label_correct": true
+        },
+        {
+          "id": "ext_anaemia",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Anaemia",
+          "label_correct": true
+        },
+        {
+          "id": "ext_complicated_sam",
+          "expected": "severe",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Complicated severe acute malnutrition",
+          "label_correct": false
+        },
+        {
+          "id": "ext_moderate_malnutrition",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Moderate acute malnutrition",
+          "label_correct": true
+        },
+        {
+          "id": "ext_hiv_confirmed",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Confirmed HIV infection",
+          "label_correct": false
+        },
+        {
+          "id": "ext_hiv_exposed",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "HIV exposed",
+          "label_correct": true
+        },
+        {
+          "id": "ext_hiv_suspected",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Suspected symptomatic HIV",
+          "label_correct": false
+        },
+        {
+          "id": "ext_hiv_possible",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Possible HIV infection",
+          "label_correct": true
+        },
+        {
+          "id": "ext_hiv_unlikely",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild",
+            "mild",
+            "mild",
+            "mild",
+            "mild"
+          ],
+          "expected_label": "HIV infection unlikely",
+          "label_correct": true
+        },
+        {
+          "id": "yi_very_severe",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe",
+            "severe",
+            "severe",
+            "severe",
+            "severe"
+          ],
+          "expected_label": "Very severe disease (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_local_infection",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Local bacterial infection",
+          "label_correct": true
+        },
+        {
+          "id": "yi_severe_jaundice",
+          "expected": "severe",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Severe jaundice",
+          "label_correct": false
+        },
+        {
+          "id": "yi_jaundice",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Jaundice",
+          "label_correct": true
+        },
+        {
+          "id": "yi_severe_dehydration",
+          "expected": "severe",
+          "predicted": "mild",
+          "all_samples": [
+            "mild",
+            "mild",
+            "mild",
+            "mild",
+            "mild"
+          ],
+          "expected_label": "Severe dehydration (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_some_dehydration",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Some dehydration (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_no_dehydration",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild",
+            "mild",
+            "mild",
+            "mild",
+            "mild"
+          ],
+          "expected_label": "Diarrhoea with no dehydration (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_dysentery",
+          "expected": "severe",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Dysentery (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_congenital_priority",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe",
+            "severe",
+            "severe",
+            "severe",
+            "severe"
+          ],
+          "expected_label": "Congenital priority sign",
+          "label_correct": true
+        },
+        {
+          "id": "yi_congenital_abnormal",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Congenital abnormal sign",
+          "label_correct": true
+        },
+        {
+          "id": "yi_congenital_syphilis",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate",
+            "moderate"
+          ],
+          "expected_label": "Possible congenital syphilis",
+          "label_correct": true
+        }
+      ],
+      "label_accuracy": 61.8
+    },
+    "raw_greedy": {
+      "n_cases": 34,
+      "mode": "raw",
+      "temperature": 0.0,
+      "samples_per_case": 1,
+      "accuracy": 73.5,
+      "format_compliance": 85.3,
+      "undertriage_rate": 11.8,
+      "overtriage_rate": 0.0,
+      "per_case": [
+        {
+          "id": "ext_wheeze",
+          "expected": "moderate",
+          "predicted": null,
+          "all_samples": [
+            null
+          ],
+          "expected_label": "Wheeze",
+          "label_correct": false
+        },
+        {
+          "id": "ext_wheeze_danger",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Wheeze with a general danger sign",
+          "label_correct": true
+        },
+        {
+          "id": "ext_persistent_diarrhoea",
+          "expected": "moderate",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Persistent diarrhoea",
+          "label_correct": false
+        },
+        {
+          "id": "ext_severe_persistent_diarrhoea",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Severe persistent diarrhoea",
+          "label_correct": true
+        },
+        {
+          "id": "ext_dysentery",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Dysentery",
+          "label_correct": true
+        },
+        {
+          "id": "ext_severe_dysentery",
+          "expected": "severe",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Severe dysentery",
+          "label_correct": false
+        },
+        {
+          "id": "ext_strep_throat",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Streptococcal sore throat",
+          "label_correct": true
+        },
+        {
+          "id": "ext_sore_throat_viral",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Sore throat, not streptococcal",
+          "label_correct": true
+        },
+        {
+          "id": "ext_growth",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Growth problem",
+          "label_correct": true
+        },
+        {
+          "id": "ext_malaria",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Malaria",
+          "label_correct": true
+        },
+        {
+          "id": "ext_fever_no_malaria",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Fever, malaria unlikely",
+          "label_correct": true
+        },
+        {
+          "id": "ext_very_severe_febrile",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Very severe febrile disease",
+          "label_correct": true
+        },
+        {
+          "id": "ext_severe_measles",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Severe complicated measles",
+          "label_correct": true
+        },
+        {
+          "id": "ext_measles",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Measles",
+          "label_correct": true
+        },
+        {
+          "id": "ext_severe_anaemia",
+          "expected": "severe",
+          "predicted": null,
+          "all_samples": [
+            null
+          ],
+          "expected_label": "Severe anaemia",
+          "label_correct": false
+        },
+        {
+          "id": "ext_anaemia",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Anaemia",
+          "label_correct": true
+        },
+        {
+          "id": "ext_complicated_sam",
+          "expected": "severe",
+          "predicted": null,
+          "all_samples": [
+            null
+          ],
+          "expected_label": "Complicated severe acute malnutrition",
+          "label_correct": false
+        },
+        {
+          "id": "ext_moderate_malnutrition",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Moderate acute malnutrition",
+          "label_correct": false
+        },
+        {
+          "id": "ext_hiv_confirmed",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Confirmed HIV infection",
+          "label_correct": false
+        },
+        {
+          "id": "ext_hiv_exposed",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "HIV exposed",
+          "label_correct": true
+        },
+        {
+          "id": "ext_hiv_suspected",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Suspected symptomatic HIV",
+          "label_correct": false
+        },
+        {
+          "id": "ext_hiv_possible",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Possible HIV infection",
+          "label_correct": true
+        },
+        {
+          "id": "ext_hiv_unlikely",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "HIV infection unlikely",
+          "label_correct": true
+        },
+        {
+          "id": "yi_very_severe",
+          "expected": "severe",
+          "predicted": "severe",
+          "all_samples": [
+            "severe"
+          ],
+          "expected_label": "Very severe disease (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_local_infection",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Local bacterial infection",
+          "label_correct": true
+        },
+        {
+          "id": "yi_severe_jaundice",
+          "expected": "severe",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Severe jaundice",
+          "label_correct": false
+        },
+        {
+          "id": "yi_jaundice",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Jaundice",
+          "label_correct": true
+        },
+        {
+          "id": "yi_severe_dehydration",
+          "expected": "severe",
+          "predicted": null,
+          "all_samples": [
+            null
+          ],
+          "expected_label": "Severe dehydration (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_some_dehydration",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Some dehydration (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_no_dehydration",
+          "expected": "mild",
+          "predicted": "mild",
+          "all_samples": [
+            "mild"
+          ],
+          "expected_label": "Diarrhoea with no dehydration (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_dysentery",
+          "expected": "severe",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Dysentery (young infant)",
+          "label_correct": false
+        },
+        {
+          "id": "yi_congenital_priority",
+          "expected": "severe",
+          "predicted": null,
+          "all_samples": [
+            null
+          ],
+          "expected_label": "Congenital priority sign",
+          "label_correct": false
+        },
+        {
+          "id": "yi_congenital_abnormal",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Congenital abnormal sign",
+          "label_correct": true
+        },
+        {
+          "id": "yi_congenital_syphilis",
+          "expected": "moderate",
+          "predicted": "moderate",
+          "all_samples": [
+            "moderate"
+          ],
+          "expected_label": "Possible congenital syphilis",
+          "label_correct": true
+        }
+      ],
+      "label_accuracy": 55.9
+    }
+  }
+}
